@@ -188,12 +188,19 @@ def create_todo(todo: TodoItemCreate, session: Session = Depends(get_session)):
     session.refresh(db_todo)
     return db_todo
 
-@app.put("/todos/{todo_id}/toggle", response_model=TodoItem, tags=["Todos"])
-def toggle_todo(todo_id: int, session: Session = Depends(get_session)):
+class TodoItemUpdate(SQLModel):
+    text: Optional[str] = None
+    completed: Optional[bool] = None
+
+@app.put("/todos/{todo_id}", response_model=TodoItem, tags=["Todos"])
+def update_todo(todo_id: int, todo_update: TodoItemUpdate, session: Session = Depends(get_session)):
     todo = session.get(TodoItem, todo_id)
     if not todo:
         raise HTTPException(status_code=404, detail="Todo not found")
-    todo.completed = not todo.completed
+    if todo_update.text is not None:
+        todo.text = todo_update.text
+    if todo_update.completed is not None:
+        todo.completed = todo_update.completed
     session.add(todo)
     session.commit()
     session.refresh(todo)
