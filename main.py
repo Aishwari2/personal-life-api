@@ -65,16 +65,28 @@ class TodoItemCreate(SQLModel):
     text: str
 
 
+import os
+
 # ==============================================================================
-# 2. DATABASE CONFIGURATION
+# 2. DATABASE CONFIGURATION (HYBRID: LOCAL SQLITE + CLOUD POSTGRESQL)
 # ==============================================================================
 
-DB_DIR = Path("C:/dev")
-DB_DIR.mkdir(parents=True, exist_ok=True)
-db_path = DB_DIR / "life.db"
+# Read from cloud environment variable; fall back to local SQLite if not found
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-sqlite_url = f"sqlite:///{db_path.as_posix()}"
-engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
+if not DATABASE_URL:
+    DB_DIR = Path("C:/dev")
+    DB_DIR.mkdir(parents=True, exist_ok=True)
+    DATABASE_URL = f"sqlite:///{(DB_DIR / 'life.db').as_posix()}"
+else:
+    # Cloud databases (Neon/Render) often supply 'postgres://', which SQLAlchemy requires as 'postgresql://'
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# SQLite requires 'check_same_thread: False', but PostgreSQL rejects it
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
@@ -85,7 +97,7 @@ def get_session():
 
 
 # ==============================================================================
-# 3. FASTAPI APP & CORS
+# 3. FASTAPI APP & DYNAMIC CORS
 # ==============================================================================
 
 app = FastAPI(
@@ -94,9 +106,13 @@ app = FastAPI(
     version="1.1.0",
 )
 
+# Allowed frontend origins (configurable via environment variable)
+raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins if os.getenv("ENVIRONMENT") == "production" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -106,7 +122,7 @@ app.add_middleware(
 def on_startup():
     create_db_and_tables()
 
-
+    
 # ==============================================================================
 # 4. API ENDPOINTS: LEARNING SESSIONS
 # ==============================================================================

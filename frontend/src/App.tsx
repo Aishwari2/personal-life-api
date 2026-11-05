@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  Play, Pause, Volume2, Plus, Trash2, Sun, Moon,
-  Sparkles, Award, Heart, Check, BookOpen, Clock, Coffee,
-  RotateCcw, BarChart2, ChevronLeft, ChevronRight,
-  ExternalLink, Copy, CheckCheck, RefreshCw, Compass, Lightbulb,
-  FileText, Edit3, X, Calendar as CalendarIcon
+  Play, Pause, Trash2, Sun, Moon,
+  Check, RotateCcw, BarChart2, ChevronLeft, ChevronRight,
+  ExternalLink, Copy, CheckCheck, RefreshCw,
+  Edit3, X
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
@@ -31,7 +30,8 @@ interface TodoItem {
   completed: boolean;
 }
 
-const API_BASE = 'http://127.0.0.1:8000';
+// Automatically uses the live cloud API in production, or localhost in development
+const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 const LOFI_STREAM = "https://stream.zeno.fm/f3wvbbqmdg8uv";
 const PASTEL_BARS = ['#ff85a2', '#b39ddb', '#80cbc4', '#ffe082', '#ffab91', '#90caf9'];
 
