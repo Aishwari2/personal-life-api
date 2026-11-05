@@ -1,0 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root[data-theme="dark"] {
+  --bg-app: #12101a;
+  --bg-sidebar: #181524;
+  --bg-card: #201c30;
+  --bg-card-hover: #29243d;
+  --border-card: #332b4a;
+  --text-main: #f5f0ff;
+  --text-muted: #a39bb8;
+  --accent-pink: #ff85a2;
+  --accent-lavender: #b39ddb;
+  --accent-mint: #80cbc4;
+  --accent-butter: #ffe082;
+  --shadow-cozy: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="light"] {
+  --bg-app: #fcf9f2;
+  --bg-sidebar: #f5efe3;
+  --bg-card: #ffffff;
+  --bg-card-hover: #faf6ee;
+  --border-card: #ebd9cf;
+  --text-main: #3d3447;
+  --text-muted: #7d728c;
+  --accent-pink: #ff7597;
+  --accent-lavender: #9c7ee6;
+  --accent-mint: #4db6ac;
+  --accent-butter: #ffd54f;
+  --shadow-cozy: 0 8px 24px rgba(133, 105, 126, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+.scrapbook-font {
+  font-family: 'Fredoka', cursive, sans-serif;
+}
+
+/* Master Layout */
+.little-life-shell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar */
+.scrapbook-sidebar {
+  width: 320px;
+  background: var(--bg-sidebar);
+  border-right: 2px dashed var(--border-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem 1.4rem;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+/* Cat Mascot Box */
+.mascot-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 24px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1.25rem;
+}
+
+.cat-svg {
+  width: 110px;
+  height: 100px;
+  margin: 0 auto;
+  display: block;
+  animation: cat-breathe 3.5s ease-in-out infinite;
+}
+
+@keyframes cat-breathe {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-3px) scale(1.02);
+  }
+}
+
+.speech-bubble {
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Lofi Widget */
+.lofi-widget {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1.25rem;
+}
+
+/* Center Canvas */
+.scrapbook-canvas {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Navigation Jellies */
+.jelly-row {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px dashed var(--border-card);
+  flex-wrap: wrap;
+}
+
+.jelly-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.jelly-btn:hover {
+  transform: translateY(-6px) scale(1.08);
+}
+
+.jelly-sticker {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.45), 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.jelly-btn.active .jelly-sticker {
+  box-shadow: 0 0 0 3px var(--accent-pink), 0 8px 20px rgba(255, 117, 151, 0.35);
+}
+
+.jelly-pink {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+}
+
+.jelly-mint {
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+}
+
+.jelly-butter {
+  background: linear-gradient(135deg, #ffe259, #ffa751);
+}
+
+.jelly-lavender {
+  background: linear-gradient(135deg, #d4fc79, #96e6a1);
+}
+
+.jelly-grape {
+  background: linear-gradient(135deg, #c471ed, #f64f59);
+}
+
+.jelly-peach {
+  background: linear-gradient(135deg, #ffecd2, #fcb69f);
+}
+
+.jelly-label {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.jelly-btn.active .jelly-label {
+  color: var(--accent-pink);
+}
+
+/* Big Aesthetic Study Stopwatch Display */
+.stopwatch-hero {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 28px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.stopwatch-digits {
+  font-family: 'Fredoka', monospace;
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent-pink);
+  margin: 1.25rem 0;
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(255, 133, 162, 0);
+  }
+
+  100% {
+    transform: scale(1.02);
+    text-shadow: 0 0 20px rgba(255, 133, 162, 0.3);
+  }
+}
+
+/* Floating Sakura Petals in the Garden */
+.floating-petal {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  animation: floatPetal 6s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes floatPetal {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  80% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(350px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Activity Garden */
+.garden-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 28px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.plant-display {
+  font-size: 6rem;
+  margin: 1rem 0;
+  display: inline-block;
+  animation: plant-sway 4s ease-in-out infinite;
+}
+
+@keyframes plant-sway {
+
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(3deg) scale(1.05);
+  }
+}
+
+.garden-progress-bar {
+  width: 100%;
+  max-width: 480px;
+  height: 14px;
+  background: var(--bg-app);
+  border-radius: 999px;
+  margin: 1.25rem auto 0.75rem auto;
+  overflow: hidden;
+  border: 1px solid var(--border-card);
+}
+
+.garden-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-mint), var(--accent-pink));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* Achievements Cabinet */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.25rem;
+}
+
+.badge-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: var(--shadow-cozy);
+}
+
+.badge-card.locked {
+  opacity: 0.45;
+  filter: grayscale(0.7);
+}
+
+.badge-icon {
+  font-size: 2.2rem;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: var(--bg-card-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* To-Do Items */
+.todo-quest-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.todo-quest-item:hover {
+  transform: translateX(4px);
+}
+
+.todo-quest-item.completed span {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Inputs & Buttons */
+.input-cute {
+  width: 100%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.input-cute:focus {
+  outline: none;
+  border-color: var(--accent-pink);
+}
+
+.btn-cute {
+  background: var(--accent-pink);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 117, 151, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.btn-cute:hover {
+  transform: translateY(-2px);
+}
