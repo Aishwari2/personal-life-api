@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root[data-theme="dark"] {
   --bg-app: #12101a;
@@ -139,7 +139,7 @@ h3,
 .jelly-row {
   display: flex;
   justify-content: center;
-  gap: 1.25rem;
+  gap: 1.15rem;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px dashed var(--border-card);
@@ -163,13 +163,13 @@ h3,
 }
 
 .jelly-sticker {
-  width: 56px;
-  height: 56px;
+  width: 54px;
+  height: 54px;
   border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   position: relative;
   box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.45), 0 8px 16px rgba(0, 0, 0, 0.1);
 }
@@ -213,7 +213,126 @@ h3,
   color: var(--accent-pink);
 }
 
-/* Big Aesthetic Study Stopwatch Display */
+/* ========================================================================== */
+/* QUOTE DECK & DISCOVERY CARDS                                               */
+/* ========================================================================== */
+
+/* Themed Category Selection Cards */
+.theme-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.theme-card-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 18px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-card-btn:hover,
+.theme-card-btn.active {
+  transform: translateY(-3px);
+  border-color: var(--accent-pink);
+}
+
+/* Focus Reader Deck Card */
+.quote-deck-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 28px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.quote-deck-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.65rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--text-main);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.quote-deck-author {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-pink);
+  margin-top: 1.25rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Daily Discovery / Subject Card */
+.discovery-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 2.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.discovery-icon {
+  font-size: 3.5rem;
+  width: 80px;
+  height: 80px;
+  background: var(--bg-card-hover);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Books & PDF Vault */
+.book-shelf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.book-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 18px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow-cozy);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-pink);
+}
+
+.badge-pdf {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: rgba(255, 117, 151, 0.15);
+  color: var(--accent-pink);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+/* Stopwatch & Garden */
 .stopwatch-hero {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -222,7 +341,6 @@ h3,
   text-align: center;
   box-shadow: var(--shadow-cozy);
   margin-bottom: 2rem;
-  position: relative;
 }
 
 .stopwatch-digits {
@@ -232,22 +350,8 @@ h3,
   letter-spacing: 2px;
   color: var(--accent-pink);
   margin: 1.25rem 0;
-  animation: pulse-glow 2s ease-in-out infinite alternate;
 }
 
-@keyframes pulse-glow {
-  0% {
-    transform: scale(1);
-    text-shadow: 0 0 0 rgba(255, 133, 162, 0);
-  }
-
-  100% {
-    transform: scale(1.02);
-    text-shadow: 0 0 20px rgba(255, 133, 162, 0.3);
-  }
-}
-
-/* Floating Sakura Petals in the Garden */
 .floating-petal {
   position: absolute;
   font-size: 1.5rem;
@@ -276,7 +380,6 @@ h3,
   }
 }
 
-/* Activity Garden */
 .garden-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -285,8 +388,6 @@ h3,
   text-align: center;
   box-shadow: var(--shadow-cozy);
   margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
 }
 
 .plant-display {
@@ -326,7 +427,6 @@ h3,
   transition: width 0.5s ease;
 }
 
-/* Achievements Cabinet */
 .badges-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -361,7 +461,6 @@ h3,
   flex-shrink: 0;
 }
 
-/* To-Do Items */
 .todo-quest-item {
   display: flex;
   justify-content: space-between;
@@ -372,11 +471,6 @@ h3,
   padding: 1rem 1.25rem;
   margin-bottom: 0.75rem;
   cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-.todo-quest-item:hover {
-  transform: translateX(4px);
 }
 
 .todo-quest-item.completed span {
@@ -384,7 +478,6 @@ h3,
   color: var(--text-muted);
 }
 
-/* Inputs & Buttons */
 .input-cute {
   width: 100%;
   background: var(--bg-card);

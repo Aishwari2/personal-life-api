@@ -242,3 +242,48 @@ def get_topic_breakdown(session: Session = Depends(get_session)):
     for s in sessions:
         topic_totals[s.topic] = topic_totals.get(s.topic, 0) + s.duration_minutes
     return [{"topic": topic, "minutes": minutes} for topic, minutes in topic_totals.items()]
+# ==============================================================================
+# 8. BACKUP & RESTORE ENDPOINTS (DATA OWNERSHIP)
+# ==============================================================================
+
+from fastapi.responses import JSONResponse
+
+@app.get("/backup/export", tags=["Backup"])
+def export_all_data(session: Session = Depends(get_session)):
+    """Export all user data as a single portable JSON file."""
+    sessions = session.exec(select(LearningSession)).all()
+    journal = session.exec(select(JournalEntry)).all()
+    todos = session.exec(select(TodoItem)).all()
+
+    backup_payload = {
+        "version": "1.1.0",
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "learning_sessions": [s.model_dump(mode="json") for s in sessions],
+        "journal_entries": [j.model_dump(mode="json") for j in journal],
+        "todos": [t.model_dump(mode="json") for t in todos],
+    }
+    return JSONResponse(content=backup_payload)
+
+
+class BackupImportPayload(SQLModel):
+    learning_sessions: List[LearningSessionCreate] = []
+    journal_entries: List[JournalEntryCreate] = []
+    todos: List[TodoItemCreate] = []
+
+@app.post("/backup/import", tags=["Backup"])
+def import_backup_data(payload: BackupImportPayload, session: Session = Depends(get_session)):
+    """Import and restore records from a JSON backup file."""
+    # Restore sessions
+    for s in payload.learning_sessions:
+        session.add(LearningSession.model_validate(s))
+    
+    # Restore journal entries
+    for j in payload.journal_entries:
+        session.add(JournalEntry.model_validate(j))
+        
+    # Restore todos
+    for t in payload.todos:
+        session.add(TodoItem(text=t.text, completed=False))
+
+    session.commit()
+    return {"status": "success", "message": "Records restored successfully"}
