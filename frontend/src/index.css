@@ -74,15 +74,15 @@ h3,
   flex-shrink: 0;
 }
 
-/* CENTERED CANVAS CONTENT (Fixes the awkward laptop left-alignment!) */
+/* Centered Canvas Container (Balances Desktop & Laptop Screens) */
 .scrapbook-canvas {
   flex: 1;
   padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   position: relative;
   overflow-x: hidden;
-  align-items: center;
 }
 
 .canvas-max-wrapper {
@@ -92,24 +92,26 @@ h3,
   flex-direction: column;
 }
 
-/* JELLY BAR: MAGNETIC HORIZONTAL SCROLL WITH CLEAN CENTERING */
+/* Perfectly Centered Jelly Navigation Row */
 .jelly-row-wrapper {
   width: 100%;
+  display: flex;
+  justify-content: center;
   margin-bottom: 2rem;
-  position: relative;
 }
 
 .jelly-row {
   display: flex;
   align-items: center;
   gap: 1.1rem;
-  padding: 0.5rem 0.5rem 1rem 0.5rem;
+  padding: 0.5rem 1rem 1rem 1rem;
   border-bottom: 2px dashed var(--border-card);
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
+  width: max-content;
+  max-width: 100%;
 }
 
 .jelly-row::-webkit-scrollbar {
@@ -126,7 +128,6 @@ h3,
   gap: 0.35rem;
   outline: none;
   flex-shrink: 0;
-  scroll-snap-align: center;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -184,7 +185,7 @@ h3,
   color: var(--accent-pink);
 }
 
-/* MOBILE RE-ORDER: Jellies appear at the top, sidebar stacks cleanly below! */
+/* Mobile Responsiveness */
 @media (max-width: 860px) {
   .little-life-shell {
     flex-direction: column-reverse;
@@ -217,7 +218,6 @@ h3,
   }
 }
 
-/* RESPONSIVE FORM ROW (No more buttons clipped off screen!) */
 .responsive-form-row {
   display: flex;
   gap: 0.75rem;
@@ -235,7 +235,7 @@ h3,
   }
 }
 
-/* BOOK FLASHCARD PEEK CARDS */
+/* Book Flashcard Cards */
 .book-card-flipper {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -267,7 +267,7 @@ h3,
   border-left: 3px solid var(--accent-pink);
 }
 
-/* SOUNDBOARD CHANNEL PILLS */
+/* Soundboard Channel Selector */
 .sound-channel-btn {
   background: var(--bg-card-hover);
   border: 1px solid var(--border-card);
@@ -285,7 +285,7 @@ h3,
   border-color: var(--accent-pink);
 }
 
-/* POLAROID VISION BOARD */
+/* Vision Board Grid */
 .vision-board-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -315,7 +315,25 @@ h3,
   margin-bottom: 0.85rem;
 }
 
-/* GENERAL UI PIECES */
+/* Curiosity Question Cards */
+.question-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1rem;
+}
+
+.question-status-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Mascot Box & General Styles */
 .mascot-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
