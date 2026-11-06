@@ -566,3 +566,77 @@ h3,
 .btn-cute:hover {
   transform: translateY(-2px);
 }
+
+/* ========================================================================== */
+/* CURIOSITY DUMP, VISION BOARD & STUDY TECHNIQUES                            */
+/* ========================================================================== */
+
+/* Vision Board Grid */
+.vision-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.polaroid-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 18px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-cozy);
+  position: relative;
+  transition: transform 0.25s ease;
+}
+
+.polaroid-card:hover {
+  transform: translateY(-4px) rotate(-1deg);
+}
+
+.polaroid-photo-box {
+  width: 100%;
+  height: 140px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Question Sandbox Cards */
+.question-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1rem;
+}
+
+.question-status-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Study Technique Cards */
+.technique-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.technique-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-cozy);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

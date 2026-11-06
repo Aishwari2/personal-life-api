@@ -1,8 +1,11 @@
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import List, Optional
+import os
+
 from fastapi import FastAPI, Depends, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlmodel import Field, SQLModel, Session, create_engine, select
 
 # ==============================================================================
@@ -24,17 +27,6 @@ class LearningSessionBase(SQLModel):
 class LearningSessionCreate(LearningSessionBase):
     pass
 
-class LearningSessionUpdate(SQLModel):
-    topic: Optional[str] = None
-    activity: Optional[str] = None
-    category: Optional[str] = None
-    duration_minutes: Optional[int] = None
-    session_date: Optional[date] = None
-    notes: Optional[str] = None
-    mood: Optional[str] = None
-    weather: Optional[str] = None
-    completed: Optional[bool] = None
-
 class LearningSession(LearningSessionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -43,18 +35,18 @@ class LearningSession(LearningSessionBase, table=True):
 # 2. Daily Journal
 class JournalEntry(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    title: str = "Daily Reflection"
+    title: str = "Daily Scrapbook Memory"
     content: str
     mood: Optional[str] = "Cozy ☕"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class JournalEntryCreate(SQLModel):
-    title: Optional[str] = "Daily Reflection"
+    title: Optional[str] = "Daily Scrapbook Memory"
     content: str
     mood: Optional[str] = "Cozy ☕"
 
 
-# 3. Persistent Daily Quests / To-Dos
+# 3. Daily Quests / To-Dos
 class TodoItem(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     text: str
@@ -64,14 +56,33 @@ class TodoItem(SQLModel, table=True):
 class TodoItemCreate(SQLModel):
     text: str
 
+class TodoItemUpdate(SQLModel):
+    text: Optional[str] = None
+    completed: Optional[bool] = None
 
-import os
+
+# 4. Curiosity Sandbox (Question Dumping Ground)
+class CuriosityQuestion(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    question: str
+    category: str = "Curiosity 💭"
+    answer_notes: Optional[str] = None
+    status: str = "Unexplored 💭"  # "Unexplored 💭" or "Solved 💡"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CuriosityQuestionCreate(SQLModel):
+    question: str
+    category: Optional[str] = "Curiosity 💭"
+
+class CuriosityQuestionUpdate(SQLModel):
+    answer_notes: Optional[str] = None
+    status: Optional[str] = None
+
 
 # ==============================================================================
 # 2. DATABASE CONFIGURATION (HYBRID: LOCAL SQLITE + CLOUD POSTGRESQL)
 # ==============================================================================
 
-# Read from cloud environment variable; fall back to local SQLite if not found
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
@@ -79,13 +90,13 @@ if not DATABASE_URL:
     DB_DIR.mkdir(parents=True, exist_ok=True)
     DATABASE_URL = f"sqlite:///{(DB_DIR / 'life.db').as_posix()}"
 else:
-    # Cloud databases (Neon/Render) often supply 'postgres://', which SQLAlchemy requires as 'postgresql://'
+    DATABASE_URL = DATABASE_URL.strip().strip("'").strip('"')
+    if DATABASE_URL.startswith("psql "):
+        DATABASE_URL = DATABASE_URL.replace("psql ", "", 1).strip().strip("'").strip('"')
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# SQLite requires 'check_same_thread: False', but PostgreSQL rejects it
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-
 engine = create_engine(DATABASE_URL, connect_args=connect_args)
 
 def create_db_and_tables():
@@ -97,22 +108,19 @@ def get_session():
 
 
 # ==============================================================================
-# 3. FASTAPI APP & DYNAMIC CORS
+# 3. FASTAPI APP & CORS
 # ==============================================================================
 
 app = FastAPI(
     title="Little Life API",
     description="A little progress, a lot of life.",
-    version="1.1.0",
+    version="1.2.0",
 )
 
-# Allowed frontend origins (configurable via environment variable)
-raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
-origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
-
+# Open CORS allows Vercel deployments and localhost to connect without restrictions
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if os.getenv("ENVIRONMENT") == "production" else ["*"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -122,15 +130,16 @@ app.add_middleware(
 def on_startup():
     create_db_and_tables()
 
-    
+
 # ==============================================================================
-# 4. API ENDPOINTS: LEARNING SESSIONS
+# 4. API ENDPOINTS
 # ==============================================================================
 
 @app.get("/", tags=["General"])
 def root():
     return {"message": "Little Life API is alive 🐾", "tagline": "A little progress, a lot of life."}
 
+# SESSIONS
 @app.post("/learning-sessions", response_model=LearningSession, status_code=status.HTTP_201_CREATED, tags=["Learning Sessions"])
 def create_session(session_data: LearningSessionCreate, session: Session = Depends(get_session)):
     db_session = LearningSession.model_validate(session_data)
@@ -140,17 +149,8 @@ def create_session(session_data: LearningSessionCreate, session: Session = Depen
     return db_session
 
 @app.get("/learning-sessions", response_model=List[LearningSession], tags=["Learning Sessions"])
-def read_sessions(
-    topic: Optional[str] = Query(None),
-    category: Optional[str] = Query(None),
-    session: Session = Depends(get_session),
-):
-    query = select(LearningSession).order_by(LearningSession.created_at.desc())
-    if topic:
-        query = query.where(LearningSession.topic.ilike(f"%{topic}%"))
-    if category:
-        query = query.where(LearningSession.category.ilike(f"%{category}%"))
-    return session.exec(query).all()
+def read_sessions(session: Session = Depends(get_session)):
+    return session.exec(select(LearningSession).order_by(LearningSession.created_at.desc())).all()
 
 @app.delete("/learning-sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Learning Sessions"])
 def delete_session(session_id: int, session: Session = Depends(get_session)):
@@ -161,11 +161,7 @@ def delete_session(session_id: int, session: Session = Depends(get_session)):
     session.commit()
     return None
 
-
-# ==============================================================================
-# 5. API ENDPOINTS: JOURNAL
-# ==============================================================================
-
+# JOURNAL
 @app.get("/journal", response_model=List[JournalEntry], tags=["Journal"])
 def get_journal(session: Session = Depends(get_session)):
     return session.exec(select(JournalEntry).order_by(JournalEntry.created_at.desc())).all()
@@ -187,11 +183,7 @@ def delete_journal(entry_id: int, session: Session = Depends(get_session)):
     session.commit()
     return None
 
-
-# ==============================================================================
-# 6. API ENDPOINTS: DAILY QUESTS / TODOS
-# ==============================================================================
-
+# QUESTS / TODOS
 @app.get("/todos", response_model=List[TodoItem], tags=["Todos"])
 def get_todos(session: Session = Depends(get_session)):
     return session.exec(select(TodoItem).order_by(TodoItem.created_at.desc())).all()
@@ -204,9 +196,16 @@ def create_todo(todo: TodoItemCreate, session: Session = Depends(get_session)):
     session.refresh(db_todo)
     return db_todo
 
-class TodoItemUpdate(SQLModel):
-    text: Optional[str] = None
-    completed: Optional[bool] = None
+@app.put("/todos/{todo_id}/toggle", response_model=TodoItem, tags=["Todos"])
+def toggle_todo(todo_id: int, session: Session = Depends(get_session)):
+    todo = session.get(TodoItem, todo_id)
+    if not todo:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    todo.completed = not todo.completed
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+    return todo
 
 @app.put("/todos/{todo_id}", response_model=TodoItem, tags=["Todos"])
 def update_todo(todo_id: int, todo_update: TodoItemUpdate, session: Session = Depends(get_session)):
@@ -231,24 +230,49 @@ def delete_todo(todo_id: int, session: Session = Depends(get_session)):
     session.commit()
     return None
 
+# CURIOSITY QUESTIONS
+@app.get("/questions", response_model=List[CuriosityQuestion], tags=["Curiosity"])
+def get_questions(session: Session = Depends(get_session)):
+    return session.exec(select(CuriosityQuestion).order_by(CuriosityQuestion.created_at.desc())).all()
 
-# ==============================================================================
-# 7. ANALYTICS ENDPOINTS
-# ==============================================================================
+@app.post("/questions", response_model=CuriosityQuestion, status_code=status.HTTP_201_CREATED, tags=["Curiosity"])
+def create_question(q: CuriosityQuestionCreate, session: Session = Depends(get_session)):
+    db_q = CuriosityQuestion(question=q.question, category=q.category or "Curiosity 💭")
+    session.add(db_q)
+    session.commit()
+    session.refresh(db_q)
+    return db_q
 
+@app.put("/questions/{q_id}", response_model=CuriosityQuestion, tags=["Curiosity"])
+def update_question(q_id: int, update: CuriosityQuestionUpdate, session: Session = Depends(get_session)):
+    db_q = session.get(CuriosityQuestion, q_id)
+    if not db_q:
+        raise HTTPException(status_code=404, detail="Question not found")
+    if update.answer_notes is not None:
+        db_q.answer_notes = update.answer_notes
+    if update.status is not None:
+        db_q.status = update.status
+    session.add(db_q)
+    session.commit()
+    session.refresh(db_q)
+    return db_q
+
+@app.delete("/questions/{q_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Curiosity"])
+def delete_question(q_id: int, session: Session = Depends(get_session)):
+    db_q = session.get(CuriosityQuestion, q_id)
+    if not db_q:
+        raise HTTPException(status_code=404, detail="Question not found")
+    session.delete(db_q)
+    session.commit()
+    return None
+
+# ANALYTICS & BACKUP
 @app.get("/analytics/summary", tags=["Analytics"])
 def get_analytics_summary(session: Session = Depends(get_session)):
     sessions = session.exec(select(LearningSession)).all()
     total_sessions = len(sessions)
     if total_sessions == 0:
-        return {
-            "total_sessions": 0,
-            "completed_sessions": 0,
-            "total_minutes": 0,
-            "total_hours": 0.0,
-            "average_session_minutes": 0.0,
-        }
-    
+        return {"total_sessions": 0, "completed_sessions": 0, "total_minutes": 0, "total_hours": 0.0, "average_session_minutes": 0.0}
     total_minutes = sum(s.duration_minutes for s in sessions)
     return {
         "total_sessions": total_sessions,
@@ -265,48 +289,18 @@ def get_topic_breakdown(session: Session = Depends(get_session)):
     for s in sessions:
         topic_totals[s.topic] = topic_totals.get(s.topic, 0) + s.duration_minutes
     return [{"topic": topic, "minutes": minutes} for topic, minutes in topic_totals.items()]
-# ==============================================================================
-# 8. BACKUP & RESTORE ENDPOINTS (DATA OWNERSHIP)
-# ==============================================================================
-
-from fastapi.responses import JSONResponse
 
 @app.get("/backup/export", tags=["Backup"])
 def export_all_data(session: Session = Depends(get_session)):
-    """Export all user data as a single portable JSON file."""
     sessions = session.exec(select(LearningSession)).all()
     journal = session.exec(select(JournalEntry)).all()
     todos = session.exec(select(TodoItem)).all()
-
-    backup_payload = {
-        "version": "1.1.0",
+    questions = session.exec(select(CuriosityQuestion)).all()
+    return JSONResponse(content={
+        "version": "1.2.0",
         "exported_at": datetime.now(timezone.utc).isoformat(),
         "learning_sessions": [s.model_dump(mode="json") for s in sessions],
         "journal_entries": [j.model_dump(mode="json") for j in journal],
         "todos": [t.model_dump(mode="json") for t in todos],
-    }
-    return JSONResponse(content=backup_payload)
-
-
-class BackupImportPayload(SQLModel):
-    learning_sessions: List[LearningSessionCreate] = []
-    journal_entries: List[JournalEntryCreate] = []
-    todos: List[TodoItemCreate] = []
-
-@app.post("/backup/import", tags=["Backup"])
-def import_backup_data(payload: BackupImportPayload, session: Session = Depends(get_session)):
-    """Import and restore records from a JSON backup file."""
-    # Restore sessions
-    for s in payload.learning_sessions:
-        session.add(LearningSession.model_validate(s))
-    
-    # Restore journal entries
-    for j in payload.journal_entries:
-        session.add(JournalEntry.model_validate(j))
-        
-    # Restore todos
-    for t in payload.todos:
-        session.add(TodoItem(text=t.text, completed=False))
-
-    session.commit()
-    return {"status": "success", "message": "Records restored successfully"}
+        "questions": [q.model_dump(mode="json") for q in questions],
+    })
