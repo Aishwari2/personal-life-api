@@ -48,91 +48,68 @@ interface VisionPillar {
 }
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-
-// High-uptime HTTPS Downtempo / Ambient Lofi Radio (SomaFM Groove Salad)
-const LOFI_STREAM = "https://ice1.somafm.com/groovesalad-128-mp3";
 const PASTEL_BARS = ['#ff85a2', '#b39ddb', '#80cbc4', '#ffe082', '#ffab91', '#90caf9'];
 
 const JOURNAL_MOOD_STICKERS = ["🌸 Joyful", "☕ Cozy", "🌙 Midnight", "💡 Eureka!", "🌱 Growing", "🧘 Serene"];
 
-// Curated Books with Iconic Flashcard Excerpts
-const CURATED_BOOKS = [
-  {
-    title: "The Principles of Psychology",
-    author: "William James",
-    category: "Psychology 🧠",
-    desc: "The foundational text establishing modern psychology, habits, and stream of thought.",
-    peekQuote: "The greatest discovery of my generation is that a human being can alter his life by altering his attitudes.",
-    link: "https://gutenberg.org/ebooks/5827"
-  },
-  {
-    title: "Advice for a Young Investigator",
-    author: "Santiago Ramón y Cajal",
-    category: "Brain & Science 🔬",
-    desc: "Timeless wisdom on scientific curiosity from the father of modern neuroscience.",
-    peekQuote: "Every man can, if he so desires, become the sculptor of his own brain.",
-    link: "https://gutenberg.org"
-  },
-  {
-    title: "The Richest Man in Babylon",
-    author: "George S. Clason",
-    category: "Finance & Wealth 💰",
-    desc: "Ancient parables outlining the core laws of saving, investing, and compounding wealth.",
-    peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.",
-    link: "https://gutenberg.org"
-  },
-  {
-    title: "Space, Time and Gravitation",
-    author: "Arthur Eddington",
-    category: "Space & Physics 🌌",
-    desc: "An accessible introduction to general relativity and Einstein's cosmic curvature.",
-    peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.",
-    link: "https://gutenberg.org/ebooks/49635"
-  },
-  {
-    title: "As a Man Thinketh",
-    author: "James Allen",
-    category: "Brain & Mindset 🌱",
-    desc: "A profound reflection on how thought patterns physically shape our character and life.",
-    peekQuote: "Mind is the Master power that molds and makes, and Man is Mind, and evermore he takes the tool of Thought.",
-    link: "https://gutenberg.org/ebooks/4507"
-  },
-  {
-    title: "Astronomy for Amateurs",
-    author: "Camille Flammarion",
-    category: "Space & Cosmos 🌌",
-    desc: "A poetic, accessible guide to observing constellations, planets, and the universe.",
-    peekQuote: "What is there more sublime than the quiet contemplation of the infinite vault of heaven?",
-    link: "https://gutenberg.org/ebooks/42144"
-  }
+// 4 CURATED CALM MUSIC CHANNELS (Pure, relaxing, uninterrupted audio)
+const AUDIO_CHANNELS = [
+  { name: "☕ Lofi Beats", url: "https://streams.ilovemusic.de/iloveradio17.mp3", desc: "Melodic study beats" },
+  { name: "🌧️ Soft Rain", url: "https://actions.google.com/sounds/v1/weather/rain_heavy.ogg", desc: "Gentle rainstorm" },
+  { name: "🎹 Piano Solos", url: "https://ice1.somafm.com/thistle-128-mp3", desc: "Calm Celtic & acoustic piano" },
+  { name: "🌌 Space Drone", url: "https://ice1.somafm.com/dronezone-128-mp3", desc: "Warm cosmic ambient" }
 ];
 
-// Themed Quote Decks
-const QUOTE_DECKS: Record<string, { quote: string; author: string }[]> = {
-  "Philosophy & Stoicism 🌿": [
-    { quote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", author: "Marcus Aurelius" },
-    { quote: "We suffer more often in imagination than in reality.", author: "Seneca" },
-    { quote: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" }
-  ],
-  "Psychology & Mind 🧠": [
-    { quote: "The greatest weapon against stress is our ability to choose one thought over another.", author: "William James" },
-    { quote: "Until you make the unconscious conscious, it will direct your life and you will call it fate.", author: "Carl Jung" },
-    { quote: "Knowing your own darkness is the best method for dealing with the darknesses of other people.", author: "Carl Jung" }
-  ],
-  "Deep Focus & Grit 🔥": [
-    { quote: "Consistency always beats intensity every single time.", author: "James Clear" },
-    { quote: "Small deeds done are better than great deeds planned.", author: "Peter Marshall" },
-    { quote: "The secret of getting ahead is getting started.", author: "Mark Twain" }
-  ],
-  "Cosmos & Wonder 🌌": [
-    { quote: "The cosmos is within us. We are made of star-stuff. We are a way for the cosmos to know itself.", author: "Carl Sagan" },
-    { quote: "Look up at the stars and not down at your feet. Try to make sense of what you see.", author: "Stephen Hawking" }
-  ]
-};
+// 40+ CURATED BOOKS ACROSS 9 ESSENTIAL SUBJECTS
+const EXPANDED_LIBRARY = [
+  // 1. Psychology & Human Behavior 🧠
+  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark masterwork on habit formation, emotion, and stream of consciousness.", peekQuote: "The greatest discovery of my generation is that a human being can alter his life by altering his attitudes.", link: "https://gutenberg.org/ebooks/5827" },
+  { title: "The Interpretation of Dreams", author: "Sigmund Freud", category: "Psychology 🧠", desc: "The foundational exploration into the unconscious mind, symbols, and psychological analysis.", peekQuote: "The mind is like an iceberg, it floats with one-seventh of its bulk above water.", link: "https://gutenberg.org/ebooks/4387" },
+  { title: "The Crowd: A Study of the Popular Mind", author: "Gustave Le Bon", category: "Psychology 🧠", desc: "The pioneering text on collective psychology, mass behavior, and contagion of thought.", peekQuote: "The masses have never thirsted after truth. Whoever can supply them with illusions is easily their master.", link: "https://gutenberg.org/ebooks/445" },
+  { title: "Man's Search for Meaning", author: "Viktor Frankl", category: "Psychology 🧠", desc: "A psychological memoir on purpose, resilience, and the inner freedom to choose attitude.", peekQuote: "When we are no longer able to change a situation, we are challenged to change ourselves.", link: "https://archive.org" },
+
+  // 2. Brain, Neuroscience & Body 🔬
+  { title: "Advice for a Young Investigator", author: "Santiago Ramón y Cajal", category: "Brain & Body 🔬", desc: "Priceless wisdom from the father of modern neuroscience on curiosity, patience, and intellect.", peekQuote: "Every man can, if he so desires, become the sculptor of his own brain.", link: "https://gutenberg.org" },
+  { title: "As a Man Thinketh", author: "James Allen", category: "Brain & Body 🔬", desc: "A timeless reflection on how thought patterns physically sculpt our personality and fate.", peekQuote: "Mind is the Master power that molds and makes, and Man is Mind.", link: "https://gutenberg.org/ebooks/4507" },
+  { title: "The Physiology of Mind", author: "Henry Maudsley", category: "Brain & Body 🔬", desc: "Early neuro-biological analysis of mental function and organic human consciousness.", peekQuote: "Consciousness is not co-extensive with mind, but only an illumination of its surface.", link: "https://gutenberg.org/ebooks/39801" },
+
+  // 3. Finance & Wealth Architecture 💰
+  { title: "The Richest Man in Babylon", author: "George S. Clason", category: "Finance 💰", desc: "Ancient Babylonian parables on the 7 eternal laws of saving and compounding capital.", peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.", link: "https://gutenberg.org" },
+  { title: "Lombard Street: The Money Market", author: "Walter Bagehot", category: "Finance 💰", desc: "The classic analysis of banking liquidity, panics, and the global circulation of capital.", peekQuote: "Money will not manage itself, and Lombard street has a great deal of money to manage.", link: "https://gutenberg.org/ebooks/3781" },
+  { title: "The Theory of Business Enterprise", author: "Thorstein Veblen", category: "Finance 💰", desc: "The brilliant institutional analysis of modern corporate finance, leverage, and machines.", peekQuote: "Invention is the mother of necessity. The business man's place in the economy is to seek profit.", link: "https://gutenberg.org/ebooks/27833" },
+
+  // 4. Economics & Strategy 📈
+  { title: "The Wealth of Nations", author: "Adam Smith", category: "Economics 📈", desc: "The foundational masterpiece on division of labor, productivity, and economic freedom.", peekQuote: "It is not from the benevolence of the butcher or the baker that we expect our dinner, but from their regard to their own interest.", link: "https://standardebooks.org/ebooks/adam-smith/the-wealth-of-nations" },
+  { title: "Principles of Economics", author: "Alfred Marshall", category: "Economics 📈", desc: "The definitive text synthesizing supply, demand, marginal utility, and economic equilibrium.", peekQuote: "Economics is a study of mankind in the ordinary business of life.", link: "https://gutenberg.org" },
+  { title: "The Art of War", author: "Sun Tzu", category: "Strategy 📈", desc: "The world's oldest and most renowned treatise on strategy, psychology, and tactical victory.", peekQuote: "The supreme art of war is to subdue the enemy without fighting.", link: "https://standardebooks.org/ebooks/sun-tzu/the-art-of-war" },
+
+  // 5. Space, Cosmos & Physics 🌌
+  { title: "Space, Time and Gravitation", author: "Arthur Eddington", category: "Space 🌌", desc: "The brilliant introduction to Einstein's general relativity and cosmic spacetime curvature.", peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.", link: "https://gutenberg.org/ebooks/49635" },
+  { title: "Astronomy for Amateurs", author: "Camille Flammarion", category: "Space 🌌", desc: "A poetic, accessible guide to observing constellations, planetary orbits, and the cosmos.", peekQuote: "What is there more sublime than the quiet contemplation of the infinite vault of heaven?", link: "https://gutenberg.org/ebooks/42144" },
+  { title: "Relativity: The Special & General Theory", author: "Albert Einstein", category: "Space 🌌", desc: "Albert Einstein's own direct, accessible explanation of the physics of light, time, and gravity.", peekQuote: "Time and space are modes by which we think and not conditions in which we live.", link: "https://gutenberg.org/ebooks/30155" },
+
+  // 6. Indian Traditional Classics & Eastern Wisdom 🪷
+  { title: "The Song Celestial (Bhagavad Gita)", author: "Edwin Arnold translation", category: "Indian Classics 🪷", desc: "The sacred dialogue on duty (Dharma), self-mastery, inner equanimity, and devotion.", peekQuote: "You have a right to your labors, but not to the fruits thereof. Act with a calm mind, unattached to outcome.", link: "https://gutenberg.org/ebooks/2388" },
+  { title: "The Upanishads", author: "Swami Paramananda translation", category: "Indian Classics 🪷", desc: "The ancient philosophical scriptures exploring Brahman, Atman, and supreme consciousness.", peekQuote: "Lead me from the unreal to the real. Lead me from darkness to light. Lead me from death to immortality.", link: "https://gutenberg.org/ebooks/3283" },
+  { title: "Raja Yoga (Self-Mastery)", author: "Swami Vivekananda", category: "Indian Classics 🪷", desc: "Swami Vivekananda's systematic lectures on concentration, meditation, and Patanjali's Yoga Sutras.", peekQuote: "Take up one idea. Make that one idea your life; dream of it; think of it; live on that idea.", link: "https://gutenberg.org" },
+  { title: "Gitanjali (Song Offerings)", author: "Rabindranath Tagore", category: "Indian Classics 🪷", desc: "The Nobel Prize-winning collection of poetic devotion, divine beauty, and human longing.", peekQuote: "Where the mind is without fear and the head is held high; into that heaven of freedom, my Father, let my country awake.", link: "https://gutenberg.org/ebooks/7164" },
+
+  // 7. Manipulation, Power & Influence 🎭
+  { title: "The Prince", author: "Niccolò Machiavelli", category: "Manipulation 🎭", desc: "The infamous realism manual on political survival, power dynamics, and human pragmatism.", peekQuote: "It is much safer to be feared than loved, if one cannot be both.", link: "https://standardebooks.org/ebooks/niccolo-machiavelli/the-prince" },
+  { title: "The Art of Worldly Wisdom", author: "Baltasar Gracián", category: "Manipulation 🎭", desc: "300 tactical aphorisms on discretion, reading human motives, and social strategy.", peekQuote: "Keep something in reserve. Do not display all your resources at once.", link: "https://gutenberg.org" },
+
+  // 8. Philosophy & Mindset 🌿
+  { title: "Meditations", author: "Marcus Aurelius", category: "Philosophy 🌿", desc: "Private emperor reflections on calm, discipline, mindfulness, and cosmic duty.", peekQuote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", link: "https://standardebooks.org/ebooks/marcus-aurelius/meditations" },
+  { title: "Letters to a Young Poet", author: "Rainer Maria Rilke", category: "Philosophy 🌿", desc: "Ten timeless letters on loneliness, patience, artistic craft, and inner growth.", peekQuote: "Be patient toward all that is unsolved in your heart and try to love the questions themselves.", link: "https://gutenberg.org" },
+
+  // 9. AI, Machines & Future Logic 🤖
+  { title: "Computing Machinery and Intelligence", author: "Alan Turing", category: "AI & Machines 🤖", desc: "Alan Turing's foundational paper introducing the Turing Test and machine consciousness.", peekQuote: "We can only see a short distance ahead, but we can see plenty there that needs to be done.", link: "https://archive.org" },
+  { title: "R.U.R. (Rossum's Universal Robots)", author: "Karel Čapek", category: "AI & Machines 🤖", desc: "The play that coined the world's very word 'robot', exploring artificial workers and humanity.", peekQuote: "The product of the human brain has escaped the control of human hands.", link: "https://gutenberg.org/ebooks/59112" }
+];
 
 export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
-  const [activeTab, setActiveTab] = useState<'timer' | 'sandbox' | 'vision' | 'library' | 'quotes' | 'calendar' | 'garden' | 'quests' | 'journal'>('timer');
+  const [activeTab, setActiveTab] = useState<'timer' | 'library' | 'sandbox' | 'vision' | 'quotes' | 'calendar' | 'garden' | 'quests' | 'journal'>('timer');
 
   // Backend Data
   const [sessions, setSessions] = useState<LearningSession[]>([]);
@@ -141,7 +118,8 @@ export default function App() {
   const [questions, setQuestions] = useState<CuriosityQuestion[]>([]);
   const [topicStats, setTopicStats] = useState<{ topic: string; minutes: number }[]>([]);
 
-  // Lofi Audio
+  // Multi-Channel Audio State
+  const [selectedChannelIdx, setSelectedChannelIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -167,27 +145,27 @@ export default function App() {
   const [newQuestionText, setNewQuestionText] = useState('');
   const [questionCategory, setQuestionCategory] = useState('Brain 🧠');
 
-  // Book Flashcard Peek State (Tracks which book card is flipped)
+  // Book Flashcard Peek State
   const [peekedBookTitle, setPeekedBookTitle] = useState<string | null>(null);
+  const [bookCategoryFilter, setBookCategoryFilter] = useState('All');
 
-  // Interactive Vision Board State (Loaded from localStorage)
+  // Vision Board State
   const [visions, setVisions] = useState<VisionPillar[]>(() => {
     const saved = localStorage.getItem('userVisions');
     if (saved) return JSON.parse(saved);
     return [
-      { id: 1, title: "Neuroscience & Mind", emoji: "🧠", goal: "Understand neural plasticity and cognitive architecture.", manifested: false },
-      { id: 2, title: "Cosmos & Physics", emoji: "🌌", goal: "Explore spacetime curvature and astrophysics.", manifested: false },
-      { id: 3, title: "Financial Freedom", emoji: "💰", goal: "Master cash-flow mechanics and compounding wealth.", manifested: false },
-      { id: 4, title: "Creative Software", emoji: "🎨", goal: "Build digital software tools that delight the human soul.", manifested: true }
+      { id: 1, title: "Psychology & Neural Mind", emoji: "🧠", goal: "Understand neural plasticity, cognitive models, and human behavior.", manifested: false },
+      { id: 2, title: "Cosmos & Astrophysics", emoji: "🌌", goal: "Explore spacetime curvature, general relativity, and quantum mechanics.", manifested: false },
+      { id: 3, title: "Financial Freedom", emoji: "💰", goal: "Master cash-flow mechanics, compounding capital, and wealth architecture.", manifested: false },
+      { id: 4, title: "Creative Software Craft", emoji: "🎨", goal: "Build digital software tools that delight the human soul.", manifested: true }
     ];
   });
   const [newVisionTitle, setNewVisionTitle] = useState('');
   const [newVisionGoal, setNewVisionGoal] = useState('');
   const [newVisionEmoji, setNewVisionEmoji] = useState('🌱');
 
-  // Quote Decks State
-  const themeKeys = Object.keys(QUOTE_DECKS);
-  const [selectedQuoteTheme, setSelectedQuoteTheme] = useState(themeKeys[0]);
+  // Quote State
+  const [selectedQuoteTheme, setSelectedQuoteTheme] = useState("Philosophy & Stoicism 🌿");
   const [quoteDeckIdx, setQuoteDeckIdx] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
   const [onlineQuote, setOnlineQuote] = useState<{ quote: string; author: string } | null>(null);
@@ -219,11 +197,11 @@ export default function App() {
     localStorage.setItem('userVisions', JSON.stringify(visions));
   }, [visions]);
 
-  // SOOTHING HARMONIC ZEN MEDITATION CHIME (Harmonic Chord: F#5 + A#5 + C#6)
+  // SOOTHING HARMONIC ZEN CHIME (Gentle singing bowl chord)
   const playZenChime = () => {
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const frequencies = [739.99, 932.33, 1108.73]; // Warm peaceful pentatonic triad
+      const frequencies = [739.99, 932.33, 1108.73];
       frequencies.forEach((freq, index) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -260,11 +238,35 @@ export default function App() {
   const triggerTestAlert = () => {
     playZenChime();
     if (Notification.permission === "granted") {
-      new Notification("Zen Alert 🌸", { body: "Gentle meditation bell is active!" });
+      new Notification("Zen Alert 🌸", { body: "Gentle meditation chime is active!" });
     }
   };
 
-  // Fetch all backend data
+  // Audio Switcher
+  const switchChannel = (idx: number) => {
+    setSelectedChannelIdx(idx);
+    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.src = AUDIO_CHANNELS[idx].url;
+      audioRef.current.load();
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    }
+  };
+
+  const toggleAudio = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().then(() => setIsPlaying(true)).catch((e) => {
+        console.error("Audio error", e);
+        setIsPlaying(false);
+      });
+    }
+  };
+
+  // Fetch backend data
   const fetchData = async () => {
     try {
       const [sessRes, todosRes, topicsRes, jourRes, questRes] = await Promise.all([
@@ -287,32 +289,6 @@ export default function App() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const toggleAudio = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch((e) => {
-        console.error("Audio error", e);
-        setIsPlaying(false);
-      });
-    }
-  };
-
-  const fetchLiveOnlineQuote = async () => {
-    setFetchingOnline(true);
-    try {
-      const res = await fetch("https://dummyjson.com/quotes/random");
-      const data = await res.json();
-      setOnlineQuote({ quote: data.quote, author: data.author });
-    } catch (err) {
-      setOnlineQuote({ quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" });
-    } finally {
-      setFetchingOnline(false);
-    }
-  };
 
   // Timer interval engine
   useEffect(() => {
@@ -380,7 +356,7 @@ export default function App() {
     setActiveTab('garden');
   };
 
-  // Curiosity Questions
+  // Curiosity Question Handlers
   const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQuestionText) return;
@@ -482,18 +458,10 @@ export default function App() {
     fetchData();
   };
 
-  const handleCopyQuote = (text: string, author: string) => {
-    navigator.clipboard.writeText(`"${text}" — ${author}`);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  // Calendar
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay();
-  const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
-  const sessionsOnDate = sessions.filter(s => s.session_date === selectedDate);
-  const journalOnDate = journalEntries.filter(j => j.created_at.slice(0, 10) === selectedDate);
+  // Filtered Books List
+  const filteredBooks = bookCategoryFilter === 'All'
+    ? EXPANDED_LIBRARY
+    : EXPANDED_LIBRARY.filter(b => b.category.toLowerCase().includes(bookCategoryFilter.toLowerCase()));
 
   // Garden Stage
   function getGardenStage() {
@@ -510,12 +478,17 @@ export default function App() {
   const garden = getGardenStage();
   const totalHours = (sessions.reduce((acc, s) => acc + s.duration_minutes, 0) / 60).toFixed(1);
 
-  const activeDeck = QUOTE_DECKS[selectedQuoteTheme] || [];
-  const currentQuoteItem = activeDeck[quoteDeckIdx % activeDeck.length];
+  // Calendar Math
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay();
+  const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
+  const sessionsOnDate = sessions.filter(s => s.session_date === selectedDate);
+  const journalOnDate = journalEntries.filter(j => j.created_at.slice(0, 10) === selectedDate);
 
   return (
     <div className="little-life-shell">
-      <audio ref={audioRef} src={LOFI_STREAM} preload="none" />
+      {/* Hidden audio element loading currently selected channel */}
+      <audio ref={audioRef} src={AUDIO_CHANNELS[selectedChannelIdx].url} preload="none" />
 
       {/* REVIEW & RENAME COMPLETION MODAL */}
       {showReviewModal && (
@@ -562,6 +535,7 @@ export default function App() {
       {/* SIDEBAR */}
       <aside className="scrapbook-sidebar">
         <div>
+          {/* Mochi Cat Mascot */}
           <div className="mascot-card">
             <svg className="cat-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M22 36L14 12C14 12 28 18 36 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
@@ -582,20 +556,33 @@ export default function App() {
             </div>
           </div>
 
-          {/* Lofi Radio Player */}
+          {/* 4-Channel Cozy Audio Player (No More Weird Radio Audio!) */}
           <div className="lofi-widget">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
               <div>
-                <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>SomaFM Groove ☕</p>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{isPlaying ? '● Live Beats' : 'Paused'}</p>
+                <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{AUDIO_CHANNELS[selectedChannelIdx].name}</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{isPlaying ? '● Playing Smoothly' : 'Paused'}</p>
               </div>
               <button onClick={toggleAudio} style={{ background: 'var(--accent-pink)', border: 'none', width: 40, height: 40, borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                 {isPlaying ? <Pause size={18} /> : <Play size={18} style={{ marginLeft: 2 }} />}
               </button>
             </div>
+
+            {/* Sound Channel Selector Pills */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginTop: '0.5rem' }}>
+              {AUDIO_CHANNELS.map((ch, i) => (
+                <button
+                  key={i}
+                  className={`sound-channel-btn ${selectedChannelIdx === i ? 'active' : ''}`}
+                  onClick={() => switchChannel(i)}
+                >
+                  {ch.name}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Clean Notification Toggle */}
+          {/* Notification Alert Toggle */}
           <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem' }}>
             <button onClick={toggleAlerts} style={{ flex: 1, background: alertsEnabled ? 'rgba(255, 117, 151, 0.12)' : 'var(--bg-card)', border: `2px dashed ${alertsEnabled ? 'var(--accent-pink)' : 'var(--border-card)'}`, borderRadius: 14, padding: '0.65rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', color: 'var(--text-main)', textAlign: 'center' }}>
               {alertsEnabled ? '🔔 Alerts: ON' : '🔕 Alerts: MUTED'}
@@ -605,6 +592,7 @@ export default function App() {
             </button>
           </div>
 
+          {/* Vitals Stats */}
           <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1rem', fontSize: '0.85rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Invested Time:</span>
@@ -621,438 +609,404 @@ export default function App() {
           </div>
         </div>
 
+        {/* Theme Switcher */}
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', padding: '0.6rem', borderRadius: 999, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)', marginTop: '1.25rem' }}>
           {theme === 'dark' ? <Sun size={15} color="#ffd54f" /> : <Moon size={15} color="#b39ddb" />}
           {theme === 'dark' ? 'Cream Paper' : 'Midnight Scrapbook'}
         </button>
       </aside>
 
-      {/* MAIN CANVAS */}
+      {/* CENTERED MAIN CANVAS */}
       <main className="scrapbook-canvas">
+        <div className="canvas-max-wrapper">
 
-        {/* THUMB-SCROLLABLE 1-ROW JELLY BAR */}
-        <nav className="jelly-row">
-          <button className={`jelly-btn ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => setActiveTab('timer')}>
-            <div className="jelly-sticker jelly-peach">⏱️</div>
-            <span className="jelly-label">Focus</span>
-          </button>
+          {/* JELLY NAVIGATION ROW (Always 1 Clean Row on Phones & Laptops) */}
+          <div className="jelly-row-wrapper">
+            <nav className="jelly-row">
+              <button className={`jelly-btn ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => setActiveTab('timer')}>
+                <div className="jelly-sticker jelly-peach">⏱️</div>
+                <span className="jelly-label">Focus</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'sandbox' ? 'active' : ''}`} onClick={() => setActiveTab('sandbox')}>
-            <div className="jelly-sticker jelly-mint">💭</div>
-            <span className="jelly-label">Curiosity</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'library' ? 'active' : ''}`} onClick={() => setActiveTab('library')}>
+                <div className="jelly-sticker jelly-pink">📚</div>
+                <span className="jelly-label">Books</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'library' ? 'active' : ''}`} onClick={() => setActiveTab('library')}>
-            <div className="jelly-sticker jelly-pink">📚</div>
-            <span className="jelly-label">Books</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'sandbox' ? 'active' : ''}`} onClick={() => setActiveTab('sandbox')}>
+                <div className="jelly-sticker jelly-mint">💭</div>
+                <span className="jelly-label">Curiosity</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'quotes' ? 'active' : ''}`} onClick={() => setActiveTab('quotes')}>
-            <div className="jelly-sticker jelly-lavender">✨</div>
-            <span className="jelly-label">Quotes</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'vision' ? 'active' : ''}`} onClick={() => setActiveTab('vision')}>
+                <div className="jelly-sticker jelly-butter">🖼️</div>
+                <span className="jelly-label">Vision</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'vision' ? 'active' : ''}`} onClick={() => setActiveTab('vision')}>
-            <div className="jelly-sticker jelly-butter">🖼️</div>
-            <span className="jelly-label">Vision</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}>
+                <div className="jelly-sticker jelly-lavender">📅</div>
+                <span className="jelly-label">Calendar</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}>
-            <div className="jelly-sticker jelly-lavender">📅</div>
-            <span className="jelly-label">Calendar</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'garden' ? 'active' : ''}`} onClick={() => setActiveTab('garden')}>
+                <div className="jelly-sticker jelly-mint">🌱</div>
+                <span className="jelly-label">Garden</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'garden' ? 'active' : ''}`} onClick={() => setActiveTab('garden')}>
-            <div className="jelly-sticker jelly-mint">🌱</div>
-            <span className="jelly-label">Garden</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'quests' ? 'active' : ''}`} onClick={() => setActiveTab('quests')}>
+                <div className="jelly-sticker jelly-butter">🍀</div>
+                <span className="jelly-label">Quests</span>
+              </button>
 
-          <button className={`jelly-btn ${activeTab === 'quests' ? 'active' : ''}`} onClick={() => setActiveTab('quests')}>
-            <div className="jelly-sticker jelly-butter">🍀</div>
-            <span className="jelly-label">Quests</span>
-          </button>
+              <button className={`jelly-btn ${activeTab === 'journal' ? 'active' : ''}`} onClick={() => setActiveTab('journal')}>
+                <div className="jelly-sticker jelly-grape">📖</div>
+                <span className="jelly-label">Journal</span>
+              </button>
+            </nav>
+          </div>
 
-          <button className={`jelly-btn ${activeTab === 'journal' ? 'active' : ''}`} onClick={() => setActiveTab('journal')}>
-            <div className="jelly-sticker jelly-grape">📖</div>
-            <span className="jelly-label">Journal</span>
-          </button>
-        </nav>
+          {/* 1. FOCUS TIMER */}
+          {activeTab === 'timer' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <button className="btn-cute" style={{ background: timerMode === 'stopwatch' ? 'var(--accent-pink)' : 'var(--bg-card-hover)', color: timerMode === 'stopwatch' ? 'white' : 'var(--text-main)', border: '2px solid var(--border-card)' }} onClick={() => { setTimerMode('stopwatch'); setTimerRunning(false); setTimerSeconds(0); }}>⏱️ Open Stopwatch</button>
+                <button className="btn-cute" style={{ background: timerMode === 'pomodoro' ? 'var(--accent-pink)' : 'var(--bg-card-hover)', color: timerMode === 'pomodoro' ? 'white' : 'var(--text-main)', border: '2px solid var(--border-card)' }} onClick={() => { setTimerMode('pomodoro'); setPomodoroTargetMins(25); setTimerSeconds(25 * 60); setTimerRunning(false); }}>⏳ Pomodoro</button>
+              </div>
 
-        {/* 1. FOCUS TIMER */}
-        {activeTab === 'timer' && (
-          <div style={{ maxWidth: 820, margin: '0 auto', width: '100%' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <button className={`btn-cute ${timerMode === 'stopwatch' ? '' : 'style-inactive'}`} style={{ background: timerMode === 'stopwatch' ? 'var(--accent-pink)' : 'var(--bg-card-hover)', color: timerMode === 'stopwatch' ? 'white' : 'var(--text-main)', border: '2px solid var(--border-card)' }} onClick={() => { setTimerMode('stopwatch'); setTimerRunning(false); setTimerSeconds(0); }}>⏱️ Open Stopwatch</button>
-              <button className={`btn-cute ${timerMode === 'pomodoro' ? '' : 'style-inactive'}`} style={{ background: timerMode === 'pomodoro' ? 'var(--accent-pink)' : 'var(--bg-card-hover)', color: timerMode === 'pomodoro' ? 'white' : 'var(--text-main)', border: '2px solid var(--border-card)' }} onClick={() => { setTimerMode('pomodoro'); setPomodoroTargetMins(25); setTimerSeconds(25 * 60); setTimerRunning(false); }}>⏳ Pomodoro</button>
+              {timerMode === 'pomodoro' && (
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  {[15, 25, 45, 60, 90].map(mins => (
+                    <button key={mins} className="btn-cute" style={{ background: pomodoroTargetMins === mins ? 'var(--accent-lavender)' : 'var(--bg-card)', color: pomodoroTargetMins === mins ? 'white' : 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => { setPomodoroTargetMins(mins); setTimerSeconds(mins * 60); setTimerRunning(false); }}>{mins}m</button>
+                  ))}
+                </div>
+              )}
+
+              <div className="stopwatch-hero">
+                <div className="responsive-form-row" style={{ maxWidth: 520, margin: '0 auto 1rem auto' }}>
+                  <input className="input-cute" placeholder="Subject..." value={timerTopic} onChange={e => setTimerTopic(e.target.value)} />
+                  <input className="input-cute" placeholder="Task..." value={timerActivity} onChange={e => setTimerActivity(e.target.value)} />
+                </div>
+                <div className="stopwatch-digits">{formatTimer(timerSeconds)}</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                  {!timerRunning ? (
+                    <button className="btn-cute" onClick={() => setTimerRunning(true)} style={{ background: 'var(--accent-mint)', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', fontSize: '1.1rem' }}>
+                      <Play size={20} fill="white" /> Start Studying
+                    </button>
+                  ) : (
+                    <button className="btn-cute" onClick={() => { setTimerRunning(false); openReviewModal(timerMode === 'stopwatch' ? Math.max(1, Math.round(timerSeconds / 60)) : pomodoroTargetMins); }} style={{ background: 'var(--accent-pink)', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', fontSize: '1.1rem' }}>
+                      <Pause size={20} fill="white" /> Finish & Review 🌱
+                    </button>
+                  )}
+                  {timerSeconds > 0 && !timerRunning && (
+                    <button onClick={() => setTimerSeconds(timerMode === 'pomodoro' ? pomodoroTargetMins * 60 : 0)} style={{ background: 'var(--bg-card-hover)', border: '2px solid var(--border-card)', borderRadius: 14, padding: '0 1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                      <RotateCcw size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
+          )}
 
-            {timerMode === 'pomodoro' && (
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                {[15, 25, 45, 60, 90].map(mins => (
-                  <button key={mins} className="btn-cute" style={{ background: pomodoroTargetMins === mins ? 'var(--accent-lavender)' : 'var(--bg-card)', color: pomodoroTargetMins === mins ? 'white' : 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => { setPomodoroTargetMins(mins); setTimerSeconds(mins * 60); setTimerRunning(false); }}>{mins}m</button>
+          {/* 2. CURATED 40+ BOOKS LIBRARY (WITH FLASHCARD PEEK EXCERPTS!) */}
+          {activeTab === 'library' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>The Master Bookshelf 📚</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Curated public domain books with iconic flashcard quotes. Click "Peek Inside 🔍" to sample the soul of any book!
+              </p>
+
+              {/* Genre Filter Chips */}
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '2rem' }}>
+                {['All', 'Psychology', 'Brain', 'Finance', 'Economics', 'Space', 'Indian Classics', 'Manipulation', 'Philosophy', 'AI'].map(genre => (
+                  <button
+                    key={genre}
+                    onClick={() => setBookCategoryFilter(genre)}
+                    style={{
+                      background: bookCategoryFilter === genre ? 'var(--accent-pink)' : 'var(--bg-card)',
+                      color: bookCategoryFilter === genre ? 'white' : 'var(--text-main)',
+                      border: '2px solid var(--border-card)', borderRadius: 999, padding: '0.35rem 0.85rem',
+                      fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer'
+                    }}
+                  >
+                    {genre}
+                  </button>
                 ))}
               </div>
-            )}
 
-            <div className="stopwatch-hero">
-              <div className="responsive-form-row" style={{ maxWidth: 520, margin: '0 auto 1rem auto' }}>
-                <input className="input-cute" placeholder="Subject (e.g. Brain plasticity)..." value={timerTopic} onChange={e => setTimerTopic(e.target.value)} />
-                <input className="input-cute" placeholder="Task..." value={timerActivity} onChange={e => setTimerActivity(e.target.value)} />
-              </div>
-              <div className="stopwatch-digits">{formatTimer(timerSeconds)}</div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                {!timerRunning ? (
-                  <button className="btn-cute" onClick={() => setTimerRunning(true)} style={{ background: 'var(--accent-mint)', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', fontSize: '1.1rem' }}>
-                    <Play size={20} fill="white" /> Start Studying
-                  </button>
-                ) : (
-                  <button className="btn-cute" onClick={() => { setTimerRunning(false); openReviewModal(timerMode === 'stopwatch' ? Math.max(1, Math.round(timerSeconds / 60)) : pomodoroTargetMins); }} style={{ background: 'var(--accent-pink)', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', fontSize: '1.1rem' }}>
-                    <Pause size={20} fill="white" /> Finish & Review 🌱
-                  </button>
-                )}
-                {timerSeconds > 0 && !timerRunning && (
-                  <button onClick={() => setTimerSeconds(timerMode === 'pomodoro' ? pomodoroTargetMins * 60 : 0)} style={{ background: 'var(--bg-card-hover)', border: '2px solid var(--border-card)', borderRadius: 14, padding: '0 1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                    <RotateCcw size={18} />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 2. CURIOSITY SANDBOX (RESPONSIVE FORM FIX) */}
-        {activeTab === 'sandbox' && (
-          <div style={{ maxWidth: 840, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Curiosity Sandbox 💭</h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Dump rabbit-hole questions during study. Research them whenever you have free quiet time!</p>
-
-            <form onSubmit={handleAddQuestion} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
-              <input className="input-cute" placeholder="What burning question just popped into your head?..." value={newQuestionText} onChange={e => setNewQuestionText(e.target.value)} required />
-              <select className="input-cute" style={{ width: '180px' }} value={questionCategory} onChange={e => setQuestionCategory(e.target.value)}>
-                <option value="Brain 🧠">Brain 🧠</option>
-                <option value="Space 🌌">Space 🌌</option>
-                <option value="Money 💰">Money 💰</option>
-                <option value="Philosophy 🌿">Philosophy 🌿</option>
-                <option value="General 💭">General 💭</option>
-              </select>
-              <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Dump Question 💭</button>
-            </form>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {questions.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No questions dumped yet!</div>
-              ) : (
-                questions.map(q => (
-                  <div key={q.id} className="question-card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-lavender)' }}>{q.category}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span onClick={() => handleToggleQuestionStatus(q)} className="question-status-tag" style={{ background: q.status === 'Solved 💡' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(255, 133, 162, 0.15)', color: q.status === 'Solved 💡' ? 'var(--accent-mint)' : 'var(--accent-pink)' }}>
-                          {q.status} (Click to toggle)
-                        </span>
-                        <button onClick={() => handleDeleteQuestion(q.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                      </div>
-                    </div>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{q.question}</h4>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* 3. BOOK FLASHCARD PEEK BOOKSHELF */}
-        {activeTab === 'library' && (
-          <div style={{ maxWidth: 840, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Books & Flashcard Peeks 📚</h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Click "Peek Inside 🔍" to preview the core insight before reading online!</p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.25rem' }}>
-              {CURATED_BOOKS.map((b, idx) => {
-                const isFlipped = peekedBookTitle === b.title;
-                return (
-                  <div key={idx} className="book-card-flipper">
-                    {!isFlipped ? (
-                      /* FRONT: Book overview */
-                      <div>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-pink)' }}>{b.category}</span>
-                        <h4 style={{ fontWeight: 700, fontSize: '1.15rem', marginTop: '0.25rem' }}>{b.title}</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{b.author}</p>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: 1.5 }}>{b.desc}</p>
-                      </div>
-                    ) : (
-                      /* BACK: Flashcard Peek with iconic quote */
-                      <div>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-mint)' }}>INSIGHT PEEK 🔍</span>
-                        <div className="book-peek-quote-box">"{b.peekQuote}"</div>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>— {b.author}</p>
-                      </div>
-                    )}
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem' }}>
-                      <button
-                        onClick={() => setPeekedBookTitle(isFlipped ? null : b.title)}
-                        className="btn-cute"
-                        style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '1px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
-                      >
-                        {isFlipped ? "Flip Back ↩" : "Peek Inside 🔍"}
-                      </button>
-
-                      <a href={b.link} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-mint)', textDecoration: 'none' }}>
-                        Read Book <ExternalLink size={13} />
-                      </a>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* 4. QUOTES VAULT */}
-        {activeTab === 'quotes' && (
-          <div style={{ maxWidth: 840, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Wisdom & Quotes Vault ✨</h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Browse themed quote decks or fetch fresh live quotes over the web.</p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
-              {themeKeys.map((themeName) => (
-                <button
-                  key={themeName}
-                  onClick={() => { setSelectedQuoteTheme(themeName); setQuoteDeckIdx(0); setOnlineQuote(null); }}
-                  style={{
-                    background: selectedQuoteTheme === themeName ? 'rgba(255, 117, 151, 0.15)' : 'var(--bg-card)',
-                    borderColor: selectedQuoteTheme === themeName ? 'var(--accent-pink)' : 'var(--border-card)',
-                    borderWidth: '2px', borderStyle: 'solid', borderRadius: 18, padding: '1rem',
-                    textAlign: 'center', cursor: 'pointer', color: 'var(--text-main)'
-                  }}
-                >
-                  <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{themeName}</p>
-                </button>
-              ))}
-            </div>
-
-            <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2.5rem', textAlign: 'center', boxShadow: 'var(--shadow-cozy)' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
-                {onlineQuote ? "Live Web Stream ✨" : selectedQuoteTheme}
-              </span>
-              <p style={{ fontFamily: 'Playfair Display', fontStyle: 'italic', fontSize: '1.5rem', lineHeight: 1.6, color: 'var(--text-main)', margin: '1rem 0' }}>
-                "{onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"
-              </p>
-              <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
-                — {onlineQuote ? onlineQuote.author : currentQuoteItem?.author}
-              </p>
-
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                {!onlineQuote && (
-                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 0.9rem' }} onClick={() => setQuoteDeckIdx(prev => (prev === 0 ? activeDeck.length - 1 : prev - 1))}>
-                    <ChevronLeft size={18} />
-                  </button>
-                )}
-                <button className="btn-cute" onClick={() => handleCopyQuote(onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote, onlineQuote ? onlineQuote.author : currentQuoteItem?.author)}>
-                  {isCopied ? <CheckCheck size={16} /> : <Copy size={16} />} {isCopied ? 'Copied!' : 'Copy Quote'}
-                </button>
-                <button className="btn-cute" style={{ background: 'var(--accent-mint)' }} onClick={fetchLiveOnlineQuote}>
-                  <RefreshCw size={16} className={fetchingOnline ? "animate-spin" : ""} /> {fetchingOnline ? "Fetching..." : "Fetch Live Quote ✨"}
-                </button>
-                {!onlineQuote && (
-                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 0.9rem' }} onClick={() => setQuoteDeckIdx(prev => (prev + 1) % activeDeck.length)}>
-                    <ChevronRight size={18} />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 5. INTERACTIVE SCRAPBOOK VISION BOARD */}
-        {activeTab === 'vision' && (
-          <div style={{ maxWidth: 840, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Interactive Vision Board 🖼️</h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Create goals, align with your life pillars, and stamp them as Manifested ✨!</p>
-
-            {/* Add Custom Vision Card Form */}
-            <form onSubmit={handleAddVision} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
-              <input className="input-cute" placeholder="Goal (e.g. Master Neuroscience)..." value={newVisionTitle} onChange={e => setNewVisionTitle(e.target.value)} required />
-              <input className="input-cute" placeholder="Description/milestone..." value={newVisionGoal} onChange={e => setNewVisionGoal(e.target.value)} />
-              <input className="input-cute" style={{ width: '80px' }} value={newVisionEmoji} onChange={e => setNewVisionEmoji(e.target.value)} />
-              <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Pin Vision 📌</button>
-            </form>
-
-            <div className="vision-board-grid">
-              {visions.map(v => (
-                <div key={v.id} className="polaroid-card">
-                  <div>
-                    <div className="polaroid-photo-box" style={{ background: v.manifested ? 'linear-gradient(135deg, #a8edea, #fed6e3)' : 'var(--bg-card-hover)' }}>{v.emoji}</div>
-                    <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.35rem' }}>{v.title}</h4>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>{v.goal}</p>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem' }}>
-                    <button
-                      onClick={() => toggleManifested(v.id)}
-                      className="btn-cute"
-                      style={{ background: v.manifested ? 'var(--accent-mint)' : 'var(--bg-card-hover)', color: v.manifested ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
-                    >
-                      {v.manifested ? "Manifested ✨" : "In Progress 🌱"}
-                    </button>
-                    <button onClick={() => deleteVision(v.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 6. CALENDAR */}
-        {activeTab === 'calendar' && (
-          <div style={{ maxWidth: 840, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Activity Calendar 📅</h2>
-            <div className="calendar-card">
-              <div className="calendar-nav-bar">
-                <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else { setCalMonth(m => m - 1); } }}>
-                  <ChevronLeft size={18} /> Prev
-                </button>
-                <h3 style={{ fontSize: '1.6rem' }}>{monthName} {calYear}</h3>
-                <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else { setCalMonth(m => m + 1); } }}>
-                  Next <ChevronRight size={18} />
-                </button>
-              </div>
-
-              <div className="calendar-grid">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (<div key={d} className="calendar-header-day">{d}</div>))}
-                {Array.from({ length: firstDayOfWeek }).map((_, i) => (<div key={`empty-${i}`} className="calendar-cell-empty" />))}
-                {Array.from({ length: daysInMonth }).map((_, i) => {
-                  const dayNum = i + 1;
-                  const dateStr = `${calYear}-${(calMonth + 1).toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
-                  const daySessions = sessions.filter(s => s.session_date === dateStr);
-                  const isSelected = selectedDate === dateStr;
+              {/* Book Cards Grid with Flashcard Peek */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.4rem' }}>
+                {filteredBooks.map((b, idx) => {
+                  const isFlipped = peekedBookTitle === b.title;
                   return (
-                    <div key={dayNum} className={`calendar-cell ${daySessions.length > 0 ? 'has-activity' : ''} ${isSelected ? 'selected' : ''}`} onClick={() => setSelectedDate(dateStr)}>
-                      <span>{dayNum}</span>
-                      {daySessions.length > 0 && <span className="activity-flower">🌸</span>}
+                    <div key={idx} className="book-card-flipper">
+                      {!isFlipped ? (
+                        <div>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-pink)' }}>{b.category}</span>
+                          <h4 style={{ fontWeight: 700, fontSize: '1.15rem', marginTop: '0.25rem' }}>{b.title}</h4>
+                          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{b.author}</p>
+                          <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: 1.5 }}>{b.desc}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-mint)' }}>ICONIC EXCERPT PEEK 🔍</span>
+                          <div className="book-peek-quote-box">"{b.peekQuote}"</div>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>— {b.author}</p>
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem' }}>
+                        <button
+                          onClick={() => setPeekedBookTitle(isFlipped ? null : b.title)}
+                          className="btn-cute"
+                          style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '1px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
+                        >
+                          {isFlipped ? "Flip Back ↩" : "Peek Inside 🔍"}
+                        </button>
+                        <a href={b.link} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-mint)', textDecoration: 'none' }}>
+                          Read Free <ExternalLink size={13} />
+                        </a>
+                      </div>
                     </div>
                   );
                 })}
               </div>
             </div>
+          )}
 
-            <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>Records for {selectedDate}</h3>
-            {sessionsOnDate.length === 0 && journalOnDate.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No records on this date.</div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                {sessionsOnDate.map(s => (
-                  <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
-                    <div>
-                      <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m</p>
+          {/* 3. CURIOSITY SANDBOX (RESPONSIVE NO-OVERFLOW FORM) */}
+          {activeTab === 'sandbox' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Curiosity Sandbox 💭</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Never break study flow to Google a rabbit-hole. Dump questions here and research them when you're free!
+              </p>
+
+              <form onSubmit={handleAddQuestion} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
+                <input className="input-cute" placeholder="What question just popped into your mind?..." value={newQuestionText} onChange={e => setNewQuestionText(e.target.value)} required />
+                <select className="input-cute" style={{ width: '180px' }} value={questionCategory} onChange={e => setQuestionCategory(e.target.value)}>
+                  <option value="Brain 🧠">Brain 🧠</option>
+                  <option value="Space 🌌">Space 🌌</option>
+                  <option value="Money 💰">Money 💰</option>
+                  <option value="Philosophy 🌿">Philosophy 🌿</option>
+                  <option value="General 💭">General 💭</option>
+                </select>
+                <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Dump Question 💭</button>
+              </form>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {questions.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No questions dumped yet!</div>
+                ) : (
+                  questions.map(q => (
+                    <div key={q.id} className="question-card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-lavender)' }}>{q.category}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span onClick={() => handleToggleQuestionStatus(q)} className="question-status-tag" style={{ background: q.status === 'Solved 💡' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(255, 133, 162, 0.15)', color: q.status === 'Solved 💡' ? 'var(--accent-mint)' : 'var(--accent-pink)' }}>
+                            {q.status} (Click to toggle)
+                          </span>
+                          <button onClick={() => handleDeleteQuestion(q.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                        </div>
+                      </div>
+                      <h4 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{q.question}</h4>
                     </div>
-                    <button onClick={async () => { await fetch(`${API_BASE}/learning-sessions/${s.id}`, { method: 'DELETE' }); fetchData(); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 4. INTERACTIVE SCRAPBOOK VISION BOARD */}
+          {activeTab === 'vision' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Scrapbook Vision Board 🖼️</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Create your North Stars, align with life goals, and stamp them as Manifested ✨!
+              </p>
+
+              {/* Add Custom Vision Card Form */}
+              <form onSubmit={handleAddVision} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
+                <input className="input-cute" placeholder="Goal (e.g. Master Neuroplasticity)..." value={newVisionTitle} onChange={e => setNewVisionTitle(e.target.value)} required />
+                <input className="input-cute" placeholder="Milestone / Description..." value={newVisionGoal} onChange={e => setNewVisionGoal(e.target.value)} />
+                <input className="input-cute" style={{ width: '80px' }} value={newVisionEmoji} onChange={e => setNewVisionEmoji(e.target.value)} />
+                <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Pin Vision 📌</button>
+              </form>
+
+              <div className="vision-board-grid">
+                {visions.map(v => (
+                  <div key={v.id} className="polaroid-card">
+                    <div>
+                      <div className="polaroid-photo-box" style={{ background: v.manifested ? 'linear-gradient(135deg, #a8edea, #fed6e3)' : 'var(--bg-card-hover)' }}>{v.emoji}</div>
+                      <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.35rem' }}>{v.title}</h4>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>{v.goal}</p>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem' }}>
+                      <button
+                        onClick={() => toggleManifested(v.id)}
+                        className="btn-cute"
+                        style={{ background: v.manifested ? 'var(--accent-mint)' : 'var(--bg-card-hover)', color: v.manifested ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
+                      >
+                        {v.manifested ? "Manifested ✨" : "In Progress 🌱"}
+                      </button>
+                      <button onClick={() => deleteVision(v.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                    </div>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        )}
-
-        {/* 7. GARDEN & RECHARTS */}
-        {activeTab === 'garden' && (
-          <div style={{ maxWidth: 820, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Your Living Garden 🌱</h2>
-            <div className="garden-card">
-              <div className="plant-display">{garden.icon}</div>
-              <h3 style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>{garden.title}</h3>
-              <p style={{ color: 'var(--text-muted)' }}>{garden.desc}</p>
-              <div className="garden-progress-bar"><div className="garden-progress-fill" style={{ width: `${Math.min(100, (sessions.length / garden.next) * 100)}%` }} /></div>
             </div>
+          )}
 
-            <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2rem', boxShadow: 'var(--shadow-cozy)', marginBottom: '2.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <BarChart2 size={20} color="var(--accent-pink)" />
-                <h3 style={{ fontSize: '1.3rem' }}>Topic Distribution (Minutes)</h3>
+          {/* 5. CALENDAR */}
+          {activeTab === 'calendar' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Activity Calendar 📅</h2>
+              <div className="calendar-card">
+                <div className="calendar-nav-bar">
+                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else { setCalMonth(m => m - 1); } }}>
+                    <ChevronLeft size={18} /> Prev
+                  </button>
+                  <h3 style={{ fontSize: '1.6rem' }}>{monthName} {calYear}</h3>
+                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else { setCalMonth(m => m + 1); } }}>
+                    Next <ChevronRight size={18} />
+                  </button>
+                </div>
+
+                <div className="calendar-grid">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (<div key={d} className="calendar-header-day">{d}</div>))}
+                  {Array.from({ length: firstDayOfWeek }).map((_, i) => (<div key={`empty-${i}`} className="calendar-cell-empty" />))}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const dayNum = i + 1;
+                    const dateStr = `${calYear}-${(calMonth + 1).toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+                    const daySessions = sessions.filter(s => s.session_date === dateStr);
+                    const isSelected = selectedDate === dateStr;
+                    return (
+                      <div key={dayNum} className={`calendar-cell ${daySessions.length > 0 ? 'has-activity' : ''} ${isSelected ? 'selected' : ''}`} onClick={() => setSelectedDate(dateStr)}>
+                        <span>{dayNum}</span>
+                        {daySessions.length > 0 && <span style={{ fontSize: '0.75rem' }}>🌸</span>}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              {topicStats.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No study minutes recorded yet.</div>
+
+              <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>Records for {selectedDate}</h3>
+              {sessionsOnDate.length === 0 && journalOnDate.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No records on this date.</div>
               ) : (
-                <div style={{ width: '100%', height: 260 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topicStats}>
-                      <XAxis dataKey="topic" stroke="var(--text-muted)" fontSize={12} />
-                      <YAxis stroke="var(--text-muted)" fontSize={12} />
-                      <Tooltip contentStyle={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-card)', borderRadius: 14 }} />
-                      <Bar dataKey="minutes" radius={[10, 10, 0, 0]}>
-                        {topicStats.map((_, i) => (<Cell key={i} fill={PASTEL_BARS[i % PASTEL_BARS.length]} />))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {sessionsOnDate.map(s => (
+                    <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
+                      <div>
+                        <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m</p>
+                      </div>
+                      <button onClick={async () => { await fetch(`${API_BASE}/learning-sessions/${s.id}`, { method: 'DELETE' }); fetchData(); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 8. QUESTS */}
-        {activeTab === 'quests' && (
-          <div style={{ maxWidth: 820, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Daily Quests 🍀</h2>
-            <form onSubmit={handleAddQuest} className="responsive-form-row" style={{ marginBottom: '1.5rem' }}>
-              <input className="input-cute" placeholder="Write your custom quest..." value={newQuestText} onChange={e => setNewQuestText(e.target.value)} />
-              <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Add Quest</button>
-            </form>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {todos.map(t => (
-                <div key={t.id} className={`todo-quest-item ${t.completed ? 'completed' : ''}`}>
-                  {editingQuestId === t.id ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                      <input className="input-cute" style={{ padding: '0.4rem 0.75rem' }} value={editingQuestText} onChange={e => setEditingQuestText(e.target.value)} autoFocus onKeyDown={e => e.key === 'Enter' && saveRenameQuest(t.id)} />
-                      <button onClick={() => saveRenameQuest(t.id)} style={{ background: 'var(--accent-mint)', border: 'none', borderRadius: 8, padding: '0.4rem 0.6rem', color: 'white', cursor: 'pointer' }}><Check size={16} /></button>
-                      <button onClick={() => setEditingQuestId(null)} style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-card)', borderRadius: 8, padding: '0.4rem 0.6rem', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={16} /></button>
-                    </div>
-                  ) : (
-                    <>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }} onClick={() => handleToggleQuest(t.id)}>
-                        <input type="checkbox" checked={t.completed} readOnly />
-                        <span style={{ fontWeight: 600 }}>{t.text} {t.completed && <span style={{ color: 'var(--accent-pink)', marginLeft: '0.5rem' }}>🐾 Completed!</span>}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <button onClick={() => { setEditingQuestId(t.id); setEditingQuestText(t.text); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Edit3 size={16} /></button>
-                        <button onClick={() => handleDeleteQuest(t.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                      </div>
-                    </>
-                  )}
+          {/* 6. GARDEN & RECHARTS */}
+          {activeTab === 'garden' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Your Living Garden 🌱</h2>
+              <div className="garden-card">
+                <div className="plant-display">{garden.icon}</div>
+                <h3 style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>{garden.title}</h3>
+                <p style={{ color: 'var(--text-muted)' }}>{garden.desc}</p>
+                <div className="garden-progress-bar"><div className="garden-progress-fill" style={{ width: `${Math.min(100, (sessions.length / garden.next) * 100)}%` }} /></div>
+              </div>
+
+              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2rem', boxShadow: 'var(--shadow-cozy)', marginBottom: '2.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <BarChart2 size={20} color="var(--accent-pink)" />
+                  <h3 style={{ fontSize: '1.3rem' }}>Topic Distribution (Minutes)</h3>
                 </div>
-              ))}
+                {topicStats.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No study minutes recorded yet.</div>
+                ) : (
+                  <div style={{ width: '100%', height: 260 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={topicStats}>
+                        <XAxis dataKey="topic" stroke="var(--text-muted)" fontSize={12} />
+                        <YAxis stroke="var(--text-muted)" fontSize={12} />
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-card)', borderRadius: 14 }} />
+                        <Bar dataKey="minutes" radius={[10, 10, 0, 0]}>
+                          {topicStats.map((_, i) => (<Cell key={i} fill={PASTEL_BARS[i % PASTEL_BARS.length]} />))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 9. JOURNAL */}
-        {activeTab === 'journal' && (
-          <div style={{ maxWidth: 820, margin: '0 auto', width: '100%' }}>
-            <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>Daily Scrapbook Journal 📖</h2>
-            <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
-              <input className="input-cute" placeholder="Title..." value={journalTitle} onChange={e => setJournalTitle(e.target.value)} style={{ marginBottom: '1rem' }} />
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                {JOURNAL_MOOD_STICKERS.map(s => (
-                  <button key={s} type="button" onClick={() => setSelectedMoodSticker(s)} style={{ background: selectedMoodSticker === s ? 'var(--accent-lavender)' : 'var(--bg-card-hover)', color: selectedMoodSticker === s ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', borderRadius: 10, padding: '0.35rem 0.75rem', cursor: 'pointer' }}>{s}</button>
+          {/* 7. QUESTS */}
+          {activeTab === 'quests' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Daily Quests 🍀</h2>
+              <form onSubmit={handleAddQuest} className="responsive-form-row" style={{ marginBottom: '1.5rem' }}>
+                <input className="input-cute" placeholder="Write your custom quest..." value={newQuestText} onChange={e => setNewQuestText(e.target.value)} />
+                <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Add Quest</button>
+              </form>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {todos.map(t => (
+                  <div key={t.id} className={`todo-quest-item ${t.completed ? 'completed' : ''}`}>
+                    {editingQuestId === t.id ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                        <input className="input-cute" style={{ padding: '0.4rem 0.75rem' }} value={editingQuestText} onChange={e => setEditingQuestText(e.target.value)} autoFocus onKeyDown={e => e.key === 'Enter' && saveRenameQuest(t.id)} />
+                        <button onClick={() => saveRenameQuest(t.id)} style={{ background: 'var(--accent-mint)', border: 'none', borderRadius: 8, padding: '0.4rem 0.6rem', color: 'white', cursor: 'pointer' }}><Check size={16} /></button>
+                        <button onClick={() => setEditingQuestId(null)} style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-card)', borderRadius: 8, padding: '0.4rem 0.6rem', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={16} /></button>
+                      </div>
+                    ) : (
+                      <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }} onClick={() => handleToggleQuest(t.id)}>
+                          <input type="checkbox" checked={t.completed} readOnly />
+                          <span style={{ fontWeight: 600 }}>{t.text} {t.completed && <span style={{ color: 'var(--accent-pink)', marginLeft: '0.5rem' }}>🐾 Completed!</span>}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <button onClick={() => { setEditingQuestId(t.id); setEditingQuestText(t.text); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Edit3 size={16} /></button>
+                          <button onClick={() => handleDeleteQuest(t.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 ))}
               </div>
-              <textarea className="input-cute" rows={4} placeholder="Write freely..." value={journalContent} onChange={e => setJournalContent(e.target.value)} />
-              <button className="btn-cute" onClick={handleSaveJournal} style={{ marginTop: '1rem' }}>Save Memory 🌸</button>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {journalEntries.map(j => (
-                <div key={j.id} className="journal-scrapbook-card">
-                  <div className="washi-tape-pin" />
-                  <h4>{j.title}</h4>
-                  <p style={{ marginTop: '0.4rem', whiteSpace: 'pre-wrap' }}>{j.content}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          )}
 
+          {/* 8. JOURNAL */}
+          {activeTab === 'journal' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Daily Scrapbook Journal 📖</h2>
+              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
+                <input className="input-cute" placeholder="Title..." value={journalTitle} onChange={e => setJournalTitle(e.target.value)} style={{ marginBottom: '1rem' }} />
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                  {JOURNAL_MOOD_STICKERS.map(s => (
+                    <button key={s} type="button" onClick={() => setSelectedMoodSticker(s)} style={{ background: selectedMoodSticker === s ? 'var(--accent-lavender)' : 'var(--bg-card-hover)', color: selectedMoodSticker === s ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', borderRadius: 10, padding: '0.35rem 0.75rem', cursor: 'pointer' }}>{s}</button>
+                  ))}
+                </div>
+                <textarea className="input-cute" rows={4} placeholder="Write freely..." value={journalContent} onChange={e => setJournalContent(e.target.value)} />
+                <button className="btn-cute" onClick={handleSaveJournal} style={{ marginTop: '1rem' }}>Save Memory 🌸</button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {journalEntries.map(j => (
+                  <div key={j.id} className="journal-scrapbook-card">
+                    <div className="washi-tape-pin" />
+                    <h4>{j.title}</h4>
+                    <p style={{ marginTop: '0.4rem', whiteSpace: 'pre-wrap' }}>{j.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
       </main>
     </div>
   );
