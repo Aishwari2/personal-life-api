@@ -44,6 +44,7 @@ body {
   color: var(--text-main);
   font-family: 'Plus Jakarta Sans', sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1,
@@ -58,6 +59,7 @@ h3,
   display: flex;
   min-height: 100vh;
   width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Desktop Sidebar */
@@ -79,119 +81,25 @@ h3,
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* Responsive Mobile Layout (Phones & Tablets) */
-@media (max-width: 900px) {
-  .little-life-shell {
-    flex-direction: column;
-    height: auto;
-    overflow-y: auto;
-  }
-
-  .scrapbook-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 2px dashed var(--border-card);
-    padding: 1.5rem 1.25rem;
-  }
-
-  .scrapbook-canvas {
-    padding: 1.5rem 1rem;
-    overflow-y: visible;
-  }
-
-  .jelly-row {
-    gap: 0.6rem !important;
-  }
-
-  .jelly-sticker {
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 1.3rem !important;
-    border-radius: 14px !important;
-  }
-
-  .jelly-label {
-    font-size: 0.7rem !important;
-  }
-
-  .stopwatch-digits {
-    font-size: 3.2rem !important;
-  }
-
-  .calendar-card {
-    padding: 1.25rem !important;
-  }
-
-  .calendar-cell {
-    font-size: 0.8rem !important;
-  }
-}
-
-/* Mascot Box */
-.mascot-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 24px;
-  padding: 1.25rem 1rem;
-  text-align: center;
-  position: relative;
-  box-shadow: var(--shadow-cozy);
-  margin-bottom: 1.25rem;
-}
-
-.cat-svg {
-  width: 110px;
-  height: 100px;
-  margin: 0 auto;
-  display: block;
-  animation: cat-breathe 3.5s ease-in-out infinite;
-}
-
-@keyframes cat-breathe {
-
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-
-  50% {
-    transform: translateY(-3px) scale(1.02);
-  }
-}
-
-.speech-bubble {
-  background: var(--bg-card-hover);
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
-  padding: 0.55rem 0.85rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 0.75rem;
-  line-height: 1.4;
-}
-
-/* Lofi Widget */
-.lofi-widget {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 20px;
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow-cozy);
-  margin-bottom: 1.25rem;
-}
-
-/* Navigation Jellies */
+/* SLEEK THUMB-SCROLL JELLY ROW (Keeps all jellies on 1 clean row!) */
 .jelly-row {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.25rem;
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
+  padding-bottom: 0.85rem;
   border-bottom: 2px dashed var(--border-card);
-  flex-wrap: wrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.jelly-row::-webkit-scrollbar {
+  display: none;
 }
 
 .jelly-btn {
@@ -203,7 +111,8 @@ h3,
   align-items: center;
   gap: 0.35rem;
   outline: none;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .jelly-btn:hover {
@@ -218,7 +127,6 @@ h3,
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  position: relative;
   box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.45), 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
@@ -261,12 +169,218 @@ h3,
   color: var(--accent-pink);
 }
 
-/* Calendar */
+/* RESPONSIVE MOBILE FORM (Stacking inputs so buttons never overflow!) */
+.responsive-form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-form-row {
+    flex-direction: column !important;
+  }
+
+  .responsive-form-row button,
+  .responsive-form-row select,
+  .responsive-form-row input {
+    width: 100% !important;
+  }
+
+  .little-life-shell {
+    flex-direction: column;
+  }
+
+  .scrapbook-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px dashed var(--border-card);
+    padding: 1.5rem 1.25rem;
+  }
+
+  .scrapbook-canvas {
+    padding: 1.5rem 1rem;
+  }
+
+  .jelly-sticker {
+    width: 46px !important;
+    height: 46px !important;
+    font-size: 1.3rem !important;
+  }
+
+  .stopwatch-digits {
+    font-size: 3.4rem !important;
+  }
+}
+
+/* BOOK FLASHCARD PEEK CARDS */
+.book-card-flipper {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-cozy);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.book-card-flipper:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-pink);
+}
+
+.book-peek-quote-box {
+  background: var(--bg-card-hover);
+  border-radius: 14px;
+  padding: 1.1rem;
+  margin: 0.75rem 0;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* VISION BOARD CARDS */
+.vision-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.polaroid-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow-cozy);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.polaroid-photo-box {
+  width: 100%;
+  height: 120px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin-bottom: 0.85rem;
+}
+
+/* CURIOSITY QUESTION CARDS */
+.question-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1rem;
+}
+
+.question-status-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* GENERAL STYLING */
+.mascot-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 24px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1.25rem;
+}
+
+.cat-svg {
+  width: 110px;
+  height: 100px;
+  margin: 0 auto;
+  display: block;
+  animation: cat-breathe 3.5s ease-in-out infinite;
+}
+
+@keyframes cat-breathe {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-3px) scale(1.02);
+  }
+}
+
+.speech-bubble {
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  line-height: 1.4;
+}
+
+.lofi-widget {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 1.25rem;
+}
+
+.input-cute {
+  width: 100%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.input-cute:focus {
+  outline: none;
+  border-color: var(--accent-pink);
+}
+
+.btn-cute {
+  background: var(--accent-pink);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 0.8rem 1.4rem;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 117, 151, 0.3);
+}
+
+.btn-cute:hover {
+  transform: translateY(-2px);
+}
+
 .calendar-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
   border-radius: 28px;
-  padding: 2.25rem;
+  padding: 2rem;
   box-shadow: var(--shadow-cozy);
   margin-bottom: 2rem;
 }
@@ -290,12 +404,11 @@ h3,
   font-weight: 800;
   color: var(--text-muted);
   text-transform: uppercase;
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.5rem;
 }
 
 .calendar-cell-empty {
   aspect-ratio: 1;
-  background: transparent;
 }
 
 .calendar-cell {
@@ -321,12 +434,6 @@ h3,
   box-shadow: 0 0 0 3px var(--accent-pink);
 }
 
-.activity-flower {
-  font-size: 0.75rem;
-  margin-top: 1px;
-}
-
-/* Washi Tape & Cards */
 .journal-scrapbook-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -359,7 +466,6 @@ h3,
   font-weight: 700;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -381,41 +487,6 @@ h3,
   width: 100%;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   text-align: center;
-}
-
-/* Timer styles */
-.timer-mode-pill {
-  background: var(--bg-card-hover);
-  border: 1px solid var(--border-card);
-  color: var(--text-muted);
-  padding: 0.5rem 1.25rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.timer-mode-pill.active {
-  background: var(--accent-pink);
-  color: white;
-  border-color: var(--accent-pink);
-}
-
-.pomodoro-chip {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  color: var(--text-main);
-  padding: 0.45rem 0.9rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.pomodoro-chip.selected {
-  border-color: var(--accent-pink);
-  background: rgba(255, 117, 151, 0.12);
-  color: var(--accent-pink);
 }
 
 .stopwatch-hero {
@@ -484,40 +555,6 @@ h3,
   transition: width 0.5s ease;
 }
 
-.badges-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.25rem;
-}
-
-.badge-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 20px;
-  padding: 1.25rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  box-shadow: var(--shadow-cozy);
-}
-
-.badge-card.locked {
-  opacity: 0.45;
-  filter: grayscale(0.7);
-}
-
-.badge-icon {
-  font-size: 2.2rem;
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  background: var(--bg-card-hover);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
 .todo-quest-item {
   display: flex;
   justify-content: space-between;
@@ -532,111 +569,4 @@ h3,
 .todo-quest-item.completed span {
   text-decoration: line-through;
   color: var(--text-muted);
-}
-
-.input-cute {
-  width: 100%;
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 14px;
-  padding: 0.75rem 1rem;
-  font-family: inherit;
-  font-size: 0.95rem;
-  color: var(--text-main);
-}
-
-.input-cute:focus {
-  outline: none;
-  border-color: var(--accent-pink);
-}
-
-.btn-cute {
-  background: var(--accent-pink);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 0.8rem 1.5rem;
-  font-family: 'Fredoka', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 117, 151, 0.3);
-}
-
-.btn-cute:hover {
-  transform: translateY(-2px);
-}
-
-/* ========================================================================== */
-/* CURIOSITY DUMP, VISION BOARD & STUDY TECHNIQUES                            */
-/* ========================================================================== */
-
-/* Vision Board Grid */
-.vision-board-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-.polaroid-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 18px;
-  padding: 1.25rem;
-  box-shadow: var(--shadow-cozy);
-  position: relative;
-  transition: transform 0.25s ease;
-}
-
-.polaroid-card:hover {
-  transform: translateY(-4px) rotate(-1deg);
-}
-
-.polaroid-photo-box {
-  width: 100%;
-  height: 140px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-/* Question Sandbox Cards */
-.question-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 20px;
-  padding: 1.4rem;
-  box-shadow: var(--shadow-cozy);
-  margin-bottom: 1rem;
-}
-
-.question-status-tag {
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 0.25rem 0.65rem;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Study Technique Cards */
-.technique-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.25rem;
-  margin-top: 1.5rem;
-}
-
-.technique-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: var(--shadow-cozy);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
