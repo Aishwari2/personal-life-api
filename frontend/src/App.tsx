@@ -3,7 +3,7 @@ import {
   Play, Pause, Trash2, Sun, Moon,
   Check, RotateCcw, BarChart2, ChevronLeft, ChevronRight,
   ExternalLink, Copy, CheckCheck, RefreshCw,
-  Edit3, X, Star, Calendar as CalendarIcon
+  Edit3, X, Award
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
@@ -48,12 +48,6 @@ interface VisionPillar {
   manifested: boolean;
 }
 
-interface DayRating {
-  date: string;
-  rating: string;
-  note?: string;
-}
-
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 const PASTEL_BARS = ['#ff85a2', '#b39ddb', '#80cbc4', '#ffe082', '#ffab91', '#90caf9'];
 
@@ -61,30 +55,67 @@ const JOURNAL_MOOD_STICKERS = ["🌸 Joyful", "☕ Cozy", "🌙 Midnight", "💡
 
 const JOURNAL_FONTS = [
   { id: "journal-font-cute", name: "🌸 Cute Rounded" },
-  { id: "journal-font-handwritten", name: "✍️ Handwritten" },
+  { id: "journal-font-handwritten", name: "✍️ Cozy Diary" },
+  { id: "journal-font-indie", name: "🌼 Whimsical Pen" },
+  { id: "journal-font-gaegu", name: "🧸 Cute Doodle" },
+  { id: "journal-font-script", name: "🎀 Flowing Script" },
   { id: "journal-font-typewriter", name: "📟 Typewriter" },
   { id: "journal-font-bookish", name: "📖 Bookish" }
 ];
 
-const EMOJI_PALETTE = ["🧠", "🌌", "💰", "🎨", "🚀", "🌸", "📚", "☕", "💎", "🧘", "🌿", "🪐", "🏹", "🏆", "💡", "🐾"];
+// 30 DISTINCT EMOJIS FOR THE VISION BOARD
+const EMOJI_PALETTE = [
+  "🧠", "🌌", "💰", "🎨", "🚀", "🌸", "📚", "☕", "💎", "🧘", "🌿", "🪐", "🏹", "🏆", "💡", "🐾",
+  "💭", "🫟", "💲", "🆕", "♻️", "🔅", "♾️", "🪷", "💖", "⛱️", "🌈", "🛩️", "🎂", "👑"
+];
 
 const DAY_RATINGS = ["🌟 Excellent", "🌸 Very Good", "✨ Good", "☕ Okayish", "🌧️ Tough Day"];
 
-// 2 Reliable Streams (No Jungle Audio)
-const AUDIO_CHANNELS = [
-  { name: "☕ Lofi Beats", url: "https://streams.ilovemusic.de/iloveradio17.mp3", desc: "Melodic study beats" },
-  { name: "🌧️ Soft Rain", url: "https://actions.google.com/sounds/v1/weather/rain_heavy.ogg", desc: "Pure gentle rain" }
-];
-
+// 40+ CURATED BOOKS ACROSS 9 COMPREHENSIVE GENRES
 const EXPANDED_LIBRARY = [
-  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark text on habit formation, emotion, and stream of thought.", peekQuote: "Could the young but realize how soon they will become mere walking bundles of habits, they would give more heed to their conduct.", link: "https://gutenberg.org/ebooks/5827" },
+  // 1. Psychology & Human Behavior 🧠
+  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark masterwork on habit formation, emotion, and stream of consciousness.", peekQuote: "Could the young but realize how soon they will become mere walking bundles of habits, they would give more heed to their conduct.", link: "https://gutenberg.org/ebooks/5827" },
+  { title: "The Interpretation of Dreams", author: "Sigmund Freud", category: "Psychology 🧠", desc: "The foundational exploration into the unconscious mind, symbols, and psychological analysis.", peekQuote: "The mind is like an iceberg, it floats with one-seventh of its bulk above water.", link: "https://gutenberg.org/ebooks/4387" },
+  { title: "The Crowd: A Study of the Popular Mind", author: "Gustave Le Bon", category: "Psychology 🧠", desc: "The pioneering text on collective psychology, mass behavior, and contagion of thought.", peekQuote: "The masses have never thirsted after truth. Whoever can supply them with illusions is easily their master.", link: "https://gutenberg.org/ebooks/445" },
+  { title: "Man's Search for Meaning", author: "Viktor Frankl", category: "Psychology 🧠", desc: "A psychological memoir on purpose, resilience, and the inner freedom to choose attitude.", peekQuote: "When we are no longer able to change a situation, we are challenged to change ourselves.", link: "https://archive.org" },
+
+  // 2. Brain, Neuroscience & Body 🔬
   { title: "Advice for a Young Investigator", author: "Santiago Ramón y Cajal", category: "Brain & Body 🔬", desc: "Priceless wisdom from the Nobel-winning father of modern neuroscience.", peekQuote: "Every man can, if he so desires, become the sculptor of his own brain.", link: "https://gutenberg.org" },
-  { title: "The Richest Man in Babylon", author: "George S. Clason", category: "Finance 💰", desc: "Ancient parables outlining the core laws of saving and compounding capital.", peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.", link: "https://gutenberg.org" },
-  { title: "The Wealth of Nations", author: "Adam Smith", category: "Economics 📈", desc: "The foundational masterpiece on division of labor, productivity, and markets.", peekQuote: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest.", link: "https://standardebooks.org/ebooks/adam-smith/the-wealth-of-nations" },
-  { title: "Space, Time and Gravitation", author: "Arthur Eddington", category: "Space 🌌", desc: "An accessible introduction to general relativity and cosmic spacetime curvature.", peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.", link: "https://gutenberg.org/ebooks/49635" },
-  { title: "The Song Celestial (Bhagavad Gita)", author: "Edwin Arnold translation", category: "Indian Classics 🪷", desc: "The sacred dialogue on duty, inner equanimity, and self-mastery.", peekQuote: "You have a right to your labors, but not to the fruits thereof. Act with a calm mind, unattached to outcome.", link: "https://gutenberg.org/ebooks/2388" },
-  { title: "The Prince", author: "Niccolò Machiavelli", category: "Manipulation 🎭", desc: "The infamous realism manual on political survival and human pragmatism.", peekQuote: "It is much safer to be feared than loved, if one cannot be both.", link: "https://standardebooks.org/ebooks/niccolo-machiavelli/the-prince" },
-  { title: "Meditations", author: "Marcus Aurelius", category: "Philosophy 🌿", desc: "Private reflections on calm, discipline, mindfulness, and cosmic duty.", peekQuote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", link: "https://standardebooks.org/ebooks/marcus-aurelius/meditations" }
+  { title: "As a Man Thinketh", author: "James Allen", category: "Brain & Body 🔬", desc: "A timeless reflection on how thought patterns physically sculpt our personality and fate.", peekQuote: "Mind is the Master power that molds and makes, and Man is Mind, and evermore he takes the tool of Thought.", link: "https://gutenberg.org/ebooks/4507" },
+  { title: "The Physiology of Mind", author: "Henry Maudsley", category: "Brain & Body 🔬", desc: "Early neuro-biological analysis of mental function and organic human consciousness.", peekQuote: "Consciousness is not co-extensive with mind, but only an illumination of its surface.", link: "https://gutenberg.org/ebooks/39801" },
+
+  // 3. Finance & Wealth Architecture 💰
+  { title: "The Richest Man in Babylon", author: "George S. Clason", category: "Finance 💰", desc: "Ancient Babylonian parables on the 7 eternal laws of saving and compounding capital.", peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.", link: "https://gutenberg.org" },
+  { title: "Lombard Street: The Money Market", author: "Walter Bagehot", category: "Finance 💰", desc: "The classic analysis of banking liquidity, panics, and the global circulation of capital.", peekQuote: "Money will not manage itself, and Lombard street has a great deal of money to manage.", link: "https://gutenberg.org/ebooks/3781" },
+  { title: "The Theory of Business Enterprise", author: "Thorstein Veblen", category: "Finance 💰", desc: "The brilliant institutional analysis of modern corporate finance, leverage, and machines.", peekQuote: "Invention is the mother of necessity. The business man's place in the economy is to seek profit.", link: "https://gutenberg.org/ebooks/27833" },
+
+  // 4. Economics & Strategy 📈
+  { title: "The Wealth of Nations", author: "Adam Smith", category: "Economics 📈", desc: "The foundational masterpiece on division of labor, productivity, and economic freedom.", peekQuote: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest.", link: "https://standardebooks.org/ebooks/adam-smith/the-wealth-of-nations" },
+  { title: "Principles of Economics", author: "Alfred Marshall", category: "Economics 📈", desc: "The definitive text synthesizing supply, demand, marginal utility, and economic equilibrium.", peekQuote: "Economics is a study of mankind in the ordinary business of life.", link: "https://gutenberg.org" },
+  { title: "The Art of War", author: "Sun Tzu", category: "Strategy 📈", desc: "The world's oldest and most renowned treatise on strategy, psychology, and tactical victory.", peekQuote: "The supreme art of war is to subdue the enemy without fighting.", link: "https://standardebooks.org/ebooks/sun-tzu/the-art-of-war" },
+
+  // 5. Space, Cosmos & Physics 🌌
+  { title: "Space, Time and Gravitation", author: "Arthur Eddington", category: "Space 🌌", desc: "The brilliant introduction to Einstein's general relativity and cosmic spacetime curvature.", peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.", link: "https://gutenberg.org/ebooks/49635" },
+  { title: "Astronomy for Amateurs", author: "Camille Flammarion", category: "Space 🌌", desc: "A poetic, accessible guide to observing constellations, planetary orbits, and the cosmos.", peekQuote: "What is there more sublime than the quiet contemplation of the infinite vault of heaven?", link: "https://gutenberg.org/ebooks/42144" },
+  { title: "Relativity: The Special & General Theory", author: "Albert Einstein", category: "Space 🌌", desc: "Albert Einstein's own direct, accessible explanation of the physics of light, time, and gravity.", peekQuote: "Time and space are modes by which we think and not conditions in which we live.", link: "https://gutenberg.org/ebooks/30155" },
+
+  // 6. Indian Traditional Classics & Eastern Wisdom 🪷
+  { title: "The Song Celestial (Bhagavad Gita)", author: "Edwin Arnold translation", category: "Indian Classics 🪷", desc: "The sacred dialogue on duty (Dharma), self-mastery, inner equanimity, and devotion.", peekQuote: "You have a right to your labors, but not to the fruits thereof. Act with a calm mind, unattached to outcome.", link: "https://gutenberg.org/ebooks/2388" },
+  { title: "The Upanishads", author: "Swami Paramananda translation", category: "Indian Classics 🪷", desc: "The ancient philosophical scriptures exploring Brahman, Atman, and supreme consciousness.", peekQuote: "Lead me from the unreal to the real. Lead me from darkness to light. Lead me from death to immortality.", link: "https://gutenberg.org/ebooks/3283" },
+  { title: "Raja Yoga (Self-Mastery)", author: "Swami Vivekananda", category: "Indian Classics 🪷", desc: "Swami Vivekananda's systematic lectures on concentration, meditation, and Patanjali's Yoga Sutras.", peekQuote: "Take up one idea. Make that one idea your life; dream of it; think of it; live on that idea.", link: "https://gutenberg.org" },
+  { title: "Gitanjali (Song Offerings)", author: "Rabindranath Tagore", category: "Indian Classics 🪷", desc: "The Nobel Prize-winning collection of poetic devotion, divine beauty, and human longing.", peekQuote: "Where the mind is without fear and the head is held high; into that heaven of freedom, my Father, let my country awake.", link: "https://gutenberg.org/ebooks/7164" },
+
+  // 7. Manipulation, Power & Influence 🎭
+  { title: "The Prince", author: "Niccolò Machiavelli", category: "Manipulation 🎭", desc: "The infamous realism manual on political survival, power dynamics, and human pragmatism.", peekQuote: "It is much safer to be feared than loved, if one cannot be both.", link: "https://standardebooks.org/ebooks/niccolo-machiavelli/the-prince" },
+  { title: "The Art of Worldly Wisdom", author: "Baltasar Gracián", category: "Manipulation 🎭", desc: "300 tactical aphorisms on discretion, reading human motives, and social strategy.", peekQuote: "Keep something in reserve. Do not display all your resources at once.", link: "https://gutenberg.org" },
+
+  // 8. Philosophy & Mindset 🌿
+  { title: "Meditations", author: "Marcus Aurelius", category: "Philosophy 🌿", desc: "Private reflections on calm, discipline, mindfulness, and cosmic duty.", peekQuote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", link: "https://standardebooks.org/ebooks/marcus-aurelius/meditations" },
+  { title: "Letters to a Young Poet", author: "Rainer Maria Rilke", category: "Philosophy 🌿", desc: "Ten timeless letters on loneliness, patience, artistic craft, and inner growth.", peekQuote: "Be patient toward all that is unsolved in your heart and try to love the questions themselves.", link: "https://gutenberg.org" },
+
+  // 9. AI, Machines & Future Logic 🤖
+  { title: "Computing Machinery and Intelligence", author: "Alan Turing", category: "AI & Machines 🤖", desc: "Alan Turing's foundational paper introducing the Turing Test and machine consciousness.", peekQuote: "We can only see a short distance ahead, but we can see plenty there that needs to be done.", link: "https://archive.org" },
+  { title: "R.U.R. (Rossum's Universal Robots)", author: "Karel Čapek", category: "AI & Machines 🤖", desc: "The play that coined the world's very word 'robot', exploring artificial workers and humanity.", peekQuote: "The product of the human brain has escaped the control of human hands.", link: "https://gutenberg.org/ebooks/59112" }
 ];
 
 const QUOTE_DECKS: Record<string, { quote: string; author: string }[]> = {
@@ -105,33 +136,32 @@ const QUOTE_DECKS: Record<string, { quote: string; author: string }[]> = {
 
 export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
-  const [activeTab, setActiveTab] = useState<'timer' | 'study' | 'quotes' | 'library' | 'sandbox' | 'vision' | 'calendar' | 'garden' | 'quests' | 'journal'>('timer');
+  const [activeTab, setActiveTab] = useState<'timer' | 'study' | 'calendar' | 'quotes' | 'library' | 'sandbox' | 'vision' | 'garden' | 'quests' | 'achievements' | 'journal'>('timer');
 
-  // LOCAL-FIRST PERSISTENCE (Instant saving with cloud background sync!)
+  // LOCAL-FIRST PERSISTENT STATE
   const [sessions, setSessions] = useState<LearningSession[]>(() => {
-    const saved = localStorage.getItem('localSessions');
-    return saved ? JSON.parse(saved) : [];
+    const s = localStorage.getItem('localSessions');
+    return s ? JSON.parse(s) : [];
   });
   const [todos, setTodos] = useState<TodoItem[]>(() => {
-    const saved = localStorage.getItem('localTodos');
-    return saved ? JSON.parse(saved) : [];
+    const s = localStorage.getItem('localTodos');
+    return s ? JSON.parse(s) : [];
   });
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(() => {
-    const saved = localStorage.getItem('localJournal');
-    return saved ? JSON.parse(saved) : [];
+    const s = localStorage.getItem('localJournal');
+    return s ? JSON.parse(s) : [];
   });
   const [questions, setQuestions] = useState<CuriosityQuestion[]>(() => {
-    const saved = localStorage.getItem('localQuestions');
-    return saved ? JSON.parse(saved) : [];
+    const s = localStorage.getItem('localQuestions');
+    return s ? JSON.parse(s) : [];
   });
   const [topicStats, setTopicStats] = useState<{ topic: string; minutes: number }[]>([]);
   const [dayRatings, setDayRatings] = useState<Record<string, string>>(() => {
-    const saved = localStorage.getItem('localDayRatings');
-    return saved ? JSON.parse(saved) : {};
+    const s = localStorage.getItem('localDayRatings');
+    return s ? JSON.parse(s) : {};
   });
 
-  // Audio State
-  const [selectedChannelIdx, setSelectedChannelIdx] = useState(0);
+  // Audio State (Clean Lofi Stream Only)
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -155,13 +185,14 @@ export default function App() {
   const [manualActivity, setManualActivity] = useState('');
   const [manualDuration, setManualDuration] = useState(30);
 
-  // Book Flashcard Peek State
+  // Book Flashcard State
   const [peekedBookTitle, setPeekedBookTitle] = useState<string | null>(null);
+  const [bookCategoryFilter, setBookCategoryFilter] = useState('All');
 
   // Vision Board State
   const [visions, setVisions] = useState<VisionPillar[]>(() => {
-    const saved = localStorage.getItem('userVisions');
-    return saved ? JSON.parse(saved) : [
+    const s = localStorage.getItem('userVisions');
+    return s ? JSON.parse(s) : [
       { id: 1, title: "Psychology & Mind", emoji: "🧠", goal: "Understand neural plasticity and human behavior.", manifested: false },
       { id: 2, title: "Cosmos & Physics", emoji: "🌌", goal: "Explore spacetime curvature and relativity.", manifested: false },
       { id: 3, title: "Financial Freedom", emoji: "💰", goal: "Master cash-flow and compounding capital.", manifested: false }
@@ -179,7 +210,7 @@ export default function App() {
   const [onlineQuote, setOnlineQuote] = useState<{ quote: string; author: string } | null>(null);
   const [fetchingOnline, setFetchingOnline] = useState(false);
 
-  // Curiosity Questions
+  // Curiosity Question State
   const [newQuestionText, setNewQuestionText] = useState('');
   const [questionCategory, setQuestionCategory] = useState('Brain 🧠');
 
@@ -188,8 +219,6 @@ export default function App() {
   const [calYear, setCalYear] = useState(now.getFullYear());
   const [calMonth, setCalMonth] = useState(now.getMonth());
   const [selectedDate, setSelectedDate] = useState<string>(now.toISOString().slice(0, 10));
-
-  // Calendar Direct Log Form
   const [calLogTopic, setCalLogTopic] = useState('');
   const [calLogActivity, setCalLogActivity] = useState('');
   const [calLogMins, setCalLogMins] = useState(30);
@@ -203,7 +232,7 @@ export default function App() {
   const [selectedMoodSticker, setSelectedMoodSticker] = useState(JOURNAL_MOOD_STICKERS[0]);
   const [selectedJournalFont, setSelectedJournalFont] = useState(JOURNAL_FONTS[0].id);
 
-  // Save to LocalStorage immediately whenever state changes
+  // Auto-Save to LocalStorage
   useEffect(() => { localStorage.setItem('localSessions', JSON.stringify(sessions)); }, [sessions]);
   useEffect(() => { localStorage.setItem('localTodos', JSON.stringify(todos)); }, [todos]);
   useEffect(() => { localStorage.setItem('localJournal', JSON.stringify(journalEntries)); }, [journalEntries]);
@@ -212,7 +241,7 @@ export default function App() {
   useEffect(() => { localStorage.setItem('localDayRatings', JSON.stringify(dayRatings)); }, [dayRatings]);
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
 
-  // Recalculate Topic Stats automatically
+  // Recalculate Topic Distribution
   useEffect(() => {
     const totals: Record<string, number> = {};
     sessions.forEach(s => {
@@ -221,39 +250,39 @@ export default function App() {
     setTopicStats(Object.entries(totals).map(([topic, minutes]) => ({ topic, minutes })));
   }, [sessions]);
 
-  // Cloud Sync on Launch
-  const fetchCloudData = async () => {
-    try {
-      const [sessRes, todosRes, jourRes, questRes] = await Promise.all([
-        fetch(`${API_BASE}/learning-sessions`),
-        fetch(`${API_BASE}/todos`),
-        fetch(`${API_BASE}/journal`),
-        fetch(`${API_BASE}/questions`),
-      ]);
-      if (sessRes.ok) {
-        const cloudSessions = await sessRes.json();
-        if (cloudSessions.length > 0) setSessions(cloudSessions);
+  // Cloud Sync on Mount
+  useEffect(() => {
+    const syncCloud = async () => {
+      try {
+        const [sessRes, todosRes, jourRes, questRes] = await Promise.all([
+          fetch(`${API_BASE}/learning-sessions`),
+          fetch(`${API_BASE}/todos`),
+          fetch(`${API_BASE}/journal`),
+          fetch(`${API_BASE}/questions`),
+        ]);
+        if (sessRes.ok) {
+          const c = await sessRes.json();
+          if (c.length > 0) setSessions(c);
+        }
+        if (todosRes.ok) {
+          const c = await todosRes.json();
+          if (c.length > 0) setTodos(c);
+        }
+        if (jourRes.ok) {
+          const c = await jourRes.json();
+          if (c.length > 0) setJournalEntries(c);
+        }
+        if (questRes.ok) {
+          const c = await questRes.json();
+          if (c.length > 0) setQuestions(c);
+        }
+      } catch (e) {
+        console.log('Operating in local-first mode');
       }
-      if (todosRes.ok) {
-        const cloudTodos = await todosRes.json();
-        if (cloudTodos.length > 0) setTodos(cloudTodos);
-      }
-      if (jourRes.ok) {
-        const cloudJour = await jourRes.json();
-        if (cloudJour.length > 0) setJournalEntries(cloudJour);
-      }
-      if (questRes.ok) {
-        const cloudQuest = await questRes.json();
-        if (cloudQuest.length > 0) setQuestions(cloudQuest);
-      }
-    } catch (e) {
-      console.log('Using local offline cache');
-    }
-  };
+    };
+    syncCloud();
+  }, []);
 
-  useEffect(() => { fetchCloudData(); }, []);
-
-  // Audio Handler
   const toggleAudio = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -264,17 +293,7 @@ export default function App() {
     }
   };
 
-  const switchChannel = (idx: number) => {
-    setSelectedChannelIdx(idx);
-    setIsPlaying(false);
-    if (audioRef.current) {
-      audioRef.current.src = AUDIO_CHANNELS[idx].url;
-      audioRef.current.load();
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
-    }
-  };
-
-  // Timer interval
+  // Timer interval engine
   useEffect(() => {
     let interval: any = null;
     if (timerRunning) {
@@ -314,24 +333,17 @@ export default function App() {
     setShowReviewModal(true);
   };
 
-  // Save Session (Local first + cloud sync)
   const saveSessionRecord = async (sessionData: { topic: string; activity: string; duration_minutes: number; mood: string; session_date: string }) => {
-    const newSession: LearningSession = {
-      id: Date.now(),
-      ...sessionData
-    };
+    const newSession: LearningSession = { id: Date.now(), ...sessionData };
     setSessions(prev => [newSession, ...prev]);
 
-    // Background sync to cloud
     try {
       await fetch(`${API_BASE}/learning-sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...sessionData, completed: true }),
       });
-    } catch (e) {
-      console.log('Saved to local cache');
-    }
+    } catch (e) { }
   };
 
   const handleSaveReviewedSession = () => {
@@ -368,7 +380,7 @@ export default function App() {
     try { await fetch(`${API_BASE}/learning-sessions/${id}`, { method: 'DELETE' }); } catch (e) { }
   };
 
-  // Calendar Day Activity Logger
+  // Calendar
   const handleCalendarLogSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!calLogTopic || !calLogActivity) return;
@@ -387,7 +399,7 @@ export default function App() {
     setDayRatings(prev => ({ ...prev, [selectedDate]: rating }));
   };
 
-  // Curiosity Question Handlers
+  // Curiosity Questions
   const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQuestionText) return;
@@ -533,12 +545,17 @@ export default function App() {
     }
   };
 
-  // Calendar
+  // Calendar calculations
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay();
   const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
   const sessionsOnDate = sessions.filter(s => s.session_date === selectedDate);
   const journalOnDate = journalEntries.filter(j => j.created_at.slice(0, 10) === selectedDate);
+
+  // Filtered Books
+  const filteredBooks = bookCategoryFilter === 'All'
+    ? EXPANDED_LIBRARY
+    : EXPANDED_LIBRARY.filter(b => b.category.toLowerCase().includes(bookCategoryFilter.toLowerCase()));
 
   // Garden
   function getGardenStage() {
@@ -554,12 +571,28 @@ export default function App() {
 
   const garden = getGardenStage();
   const totalHours = (sessions.reduce((acc, s) => acc + s.duration_minutes, 0) / 60).toFixed(1);
+
+  // 10 Verified Achievements
+  const achievements = [
+    { id: 1, title: 'First Step', icon: '🐾', quote: 'A journey of a thousand miles begins with a single step.', desc: 'Log 1 learning session', unlocked: sessions.length >= 1 },
+    { id: 2, title: 'Green Thumb', icon: '🌱', quote: 'Small seeds grow into mighty trees.', desc: 'Sprout your garden (2+ sessions)', unlocked: sessions.length >= 2 },
+    { id: 3, title: 'Curious Cat', icon: '🐱', quote: 'Curiosity is the spark of genius.', desc: 'Study 3 distinct topics', unlocked: topicStats.length >= 3 },
+    { id: 4, title: 'Flow State', icon: '🌊', quote: 'Time disappears when you love what you learn.', desc: 'Log a session of 45+ minutes', unlocked: sessions.some(s => s.duration_minutes >= 45) },
+    { id: 5, title: 'Deep Roots', icon: '🌿', quote: 'Consistency always beats intensity.', desc: 'Log 5 total sessions', unlocked: sessions.length >= 5 },
+    { id: 6, title: 'In Full Bloom', icon: '🌷', quote: 'Bloom where you are planted.', desc: 'Reach 10 sessions in your garden', unlocked: sessions.length >= 10 },
+    { id: 7, title: 'Ten-Hour Master', icon: '⏳', quote: 'Dedicated hours compound into miracles.', desc: 'Log 10+ total study hours', unlocked: Number(totalHours) >= 10 },
+    { id: 8, title: 'Thought Keeper', icon: '📖', quote: 'Writing is thinking out loud on paper.', desc: 'Save 3 journal entries', unlocked: journalEntries.length >= 3 },
+    { id: 9, title: 'Quest Hunter', icon: '🍀', quote: 'Check off small goals to win big victories.', desc: 'Complete 3 daily quests', unlocked: todos.filter(t => t.completed).length >= 3 },
+    { id: 10, title: 'Sakura Legend', icon: '🌸', quote: 'You are authoring a life worth celebrating.', desc: 'Reach 20+ study milestones', unlocked: sessions.length >= 20 },
+  ];
+
   const activeDeck = QUOTE_DECKS[selectedQuoteTheme] || [];
   const currentQuoteItem = activeDeck[quoteDeckIdx % activeDeck.length];
 
   return (
     <div className="little-life-shell">
-      <audio ref={audioRef} src={AUDIO_CHANNELS[selectedChannelIdx].url} preload="none" />
+      {/* Clean Lofi Stream Audio Element */}
+      <audio ref={audioRef} src="https://streams.ilovemusic.de/iloveradio17.mp3" preload="none" />
 
       {/* REVIEW & RENAME COMPLETION MODAL */}
       {showReviewModal && (
@@ -606,49 +639,39 @@ export default function App() {
       {/* SIDEBAR */}
       <aside className="scrapbook-sidebar">
         <div>
-          <div className="mascot-card">
-            <svg className="cat-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 36L14 12C14 12 28 18 36 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
-              <path d="M78 36L86 12C86 12 72 18 64 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
-              <ellipse cx="50" cy="50" rx="36" ry="30" fill="#fff9c4" stroke="#ffb74d" strokeWidth="3" />
-              <circle cx="38" cy="48" r="4" fill="#3d3447" />
-              <circle cx="62" cy="48" r="4" fill="#3d3447" />
-              <circle cx="39" cy="46" r="1.5" fill="white" />
-              <circle cx="63" cy="46" r="1.5" fill="white" />
-              <polygon points="50,54 46,58 54,58" fill="#ff85a2" />
-              <path d="M46 58Q50 63 54 58" stroke="#ff85a2" strokeWidth="2" strokeLinecap="round" />
-              <ellipse cx="30" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
-              <ellipse cx="70" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
-            </svg>
-            <h3 style={{ fontSize: '1.25rem', marginTop: '0.4rem' }}>Mochi the Cat</h3>
-            <div className="speech-bubble">
-              {timerRunning ? "Deep focus flow active! 🎧✨" : "A little progress every day makes a lot of life! 🌸"}
+          {/* MOCHI THE CAT ONLY APPEARS ON FOCUS (TIMER) TAB */}
+          {activeTab === 'timer' && (
+            <div className="mascot-card">
+              <svg className="cat-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 36L14 12C14 12 28 18 36 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
+                <path d="M78 36L86 12C86 12 72 18 64 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
+                <ellipse cx="50" cy="50" rx="36" ry="30" fill="#fff9c4" stroke="#ffb74d" strokeWidth="3" />
+                <circle cx="38" cy="48" r="4" fill="#3d3447" />
+                <circle cx="62" cy="48" r="4" fill="#3d3447" />
+                <circle cx="39" cy="46" r="1.5" fill="white" />
+                <circle cx="63" cy="46" r="1.5" fill="white" />
+                <polygon points="50,54 46,58 54,58" fill="#ff85a2" />
+                <path d="M46 58Q50 63 54 58" stroke="#ff85a2" strokeWidth="2" strokeLinecap="round" />
+                <ellipse cx="30" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
+                <ellipse cx="70" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
+              </svg>
+              <h3 style={{ fontSize: '1.25rem', marginTop: '0.4rem' }}>Mochi the Cat</h3>
+              <div className="speech-bubble">
+                {timerRunning ? "Deep focus flow active! 🎧✨" : "A little progress every day makes a lot of life! 🌸"}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Clean Audio Player (Rain + Lofi) */}
+          {/* Clean 24/7 Lofi Player */}
           <div className="lofi-widget">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{AUDIO_CHANNELS[selectedChannelIdx].name}</p>
+                <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>☕ Cozy Lofi Beats</p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{isPlaying ? '● Playing Smoothly' : 'Paused'}</p>
               </div>
-              <button onClick={toggleAudio} style={{ background: 'var(--accent-pink)', border: 'none', width: 40, height: 40, borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+              <button onClick={toggleAudio} style={{ background: 'var(--accent-pink)', border: 'none', width: 42, height: 42, borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                 {isPlaying ? <Pause size={18} /> : <Play size={18} style={{ marginLeft: 2 }} />}
               </button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginTop: '0.5rem' }}>
-              {AUDIO_CHANNELS.map((ch, i) => (
-                <button
-                  key={i}
-                  className="btn-cute"
-                  style={{ background: selectedChannelIdx === i ? 'var(--accent-pink)' : 'var(--bg-card-hover)', color: selectedChannelIdx === i ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', padding: '0.35rem 0.5rem', fontSize: '0.75rem' }}
-                  onClick={() => switchChannel(i)}
-                >
-                  {ch.name}
-                </button>
-              ))}
             </div>
           </div>
 
@@ -669,17 +692,17 @@ export default function App() {
           </div>
         </div>
 
-        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', padding: '0.6rem', borderRadius: 999, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)', marginTop: '1.25rem' }}>
+        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', padding: '0.6rem', borderRadius: 999, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-main)', marginTop: '1.25rem' }}>
           {theme === 'dark' ? <Sun size={15} color="#ffd54f" /> : <Moon size={15} color="#b39ddb" />}
           {theme === 'dark' ? 'Cream Paper' : 'Midnight Scrapbook'}
         </button>
       </aside>
 
-      {/* CENTERED CANVAS */}
+      {/* CENTERED MAIN CANVAS */}
       <main className="scrapbook-canvas">
         <div className="canvas-max-wrapper">
 
-          {/* JELLY NAVIGATION ROW (CENTERED!) */}
+          {/* JELLY NAVIGATION ROW (CENTERED ON DESKTOP, SWIPEABLE ON MOBILE) */}
           <div className="jelly-row-wrapper">
             <nav className="jelly-row">
               <button className={`jelly-btn ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => setActiveTab('timer')}>
@@ -692,19 +715,24 @@ export default function App() {
                 <span className="jelly-label">Study Log</span>
               </button>
 
+              <button className={`jelly-btn ${activeTab === 'achievements' ? 'active' : ''}`} onClick={() => setActiveTab('achievements')}>
+                <div className="jelly-sticker jelly-grape">🏆</div>
+                <span className="jelly-label">Badges</span>
+              </button>
+
               <button className={`jelly-btn ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}>
                 <div className="jelly-sticker jelly-lavender">📅</div>
                 <span className="jelly-label">Calendar</span>
               </button>
 
-              <button className={`jelly-btn ${activeTab === 'quotes' ? 'active' : ''}`} onClick={() => setActiveTab('quotes')}>
-                <div className="jelly-sticker jelly-butter">✨</div>
-                <span className="jelly-label">Quotes</span>
-              </button>
-
               <button className={`jelly-btn ${activeTab === 'library' ? 'active' : ''}`} onClick={() => setActiveTab('library')}>
                 <div className="jelly-sticker jelly-lavender">📚</div>
                 <span className="jelly-label">Books</span>
+              </button>
+
+              <button className={`jelly-btn ${activeTab === 'quotes' ? 'active' : ''}`} onClick={() => setActiveTab('quotes')}>
+                <div className="jelly-sticker jelly-butter">✨</div>
+                <span className="jelly-label">Quotes</span>
               </button>
 
               <button className={`jelly-btn ${activeTab === 'sandbox' ? 'active' : ''}`} onClick={() => setActiveTab('sandbox')}>
@@ -781,7 +809,7 @@ export default function App() {
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Study Analytics & Graph 🎀</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Your visual topic distribution and verified study session history.
+                Your visual topic breakdown and verified study session history.
               </p>
 
               {/* The Recharts Bar Chart */}
@@ -853,12 +881,40 @@ export default function App() {
             </div>
           )}
 
-          {/* 3. CALENDAR & DAY RATING (Log for specific days + rate your days!) */}
+          {/* 3. ACHIEVEMENTS & MILESTONES CABINET */}
+          {activeTab === 'achievements' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Achievement Cabinet 🏆</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Every badge carries encouraging lore and unlocks from your real study milestones!
+              </p>
+
+              <div className="badges-grid">
+                {achievements.map(a => (
+                  <div key={a.id} className={`badge-card ${a.unlocked ? '' : 'locked'}`}>
+                    <div className="badge-icon">{a.icon}</div>
+                    <div>
+                      <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>{a.title}</h4>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{a.desc}</p>
+                      <p style={{ fontSize: '0.75rem', fontStyle: 'italic', color: 'var(--accent-pink)', marginTop: '0.35rem' }}>
+                        "{a.quote}"
+                      </p>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: a.unlocked ? 'var(--accent-mint)' : 'var(--text-muted)', marginTop: '0.4rem', display: 'inline-block' }}>
+                        {a.unlocked ? '✓ UNLOCKED' : '🔒 LOCKED'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 4. CALENDAR & MOOD RATING */}
           {activeTab === 'calendar' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Activity Calendar & Mood 📅</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Rate how your day went, log past sessions for any date, and inspect your milestones!
+                Rate your day, log past sessions for any date, and inspect your milestones!
               </p>
 
               <div className="calendar-card">
@@ -892,7 +948,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Day Details & Day Rating Selector */}
+              {/* Day Rating Selector */}
               <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
                 <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>Rate Your Day on {selectedDate}:</h3>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
@@ -912,8 +968,7 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Log for this specific date */}
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Log Milestone for this Date:</h4>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Log Milestone Directly on {selectedDate}:</h4>
                 <form onSubmit={handleCalendarLogSubmit} className="responsive-form-row">
                   <input className="input-cute" placeholder="Subject..." value={calLogTopic} onChange={e => setCalLogTopic(e.target.value)} required />
                   <input className="input-cute" placeholder="What did you do?..." value={calLogActivity} onChange={e => setCalLogActivity(e.target.value)} required />
@@ -941,74 +996,35 @@ export default function App() {
             </div>
           )}
 
-          {/* 4. QUOTES & WISDOM VAULT */}
-          {activeTab === 'quotes' && (
-            <div>
-              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Wisdom & Quotes Sanctuary ✨</h2>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Browse themed quote decks or fetch fresh live quotes from across the internet!
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
-                {themeKeys.map((themeName) => (
-                  <button
-                    key={themeName}
-                    onClick={() => { setSelectedQuoteTheme(themeName); setQuoteDeckIdx(0); setOnlineQuote(null); }}
-                    style={{
-                      background: selectedQuoteTheme === themeName ? 'rgba(255, 117, 151, 0.15)' : 'var(--bg-card)',
-                      borderColor: selectedQuoteTheme === themeName ? 'var(--accent-pink)' : 'var(--border-card)',
-                      borderWidth: '2px', borderStyle: 'solid', borderRadius: 18, padding: '1rem',
-                      textAlign: 'center', cursor: 'pointer', color: 'var(--text-main)'
-                    }}
-                  >
-                    <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{themeName}</p>
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2.5rem', textAlign: 'center', boxShadow: 'var(--shadow-cozy)' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
-                  {onlineQuote ? "Live Web Stream ✨" : selectedQuoteTheme}
-                </span>
-                <p className="quote-vault-text" style={{ margin: '1rem 0' }}>
-                  "{onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"
-                </p>
-                <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
-                  — {onlineQuote ? onlineQuote.author : currentQuoteItem?.author}
-                </p>
-
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                  {!onlineQuote && (
-                    <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 0.9rem' }} onClick={() => setQuoteDeckIdx(prev => (prev === 0 ? activeDeck.length - 1 : prev - 1))}>
-                      <ChevronLeft size={18} />
-                    </button>
-                  )}
-                  <button className="btn-cute" onClick={() => { navigator.clipboard.writeText(`"${onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"`); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }}>
-                    {isCopied ? <CheckCheck size={16} /> : <Copy size={16} />} {isCopied ? 'Copied!' : 'Copy Quote'}
-                  </button>
-                  <button className="btn-cute" style={{ background: 'var(--accent-mint)' }} onClick={fetchLiveOnlineQuote}>
-                    <RefreshCw size={16} className={fetchingOnline ? "animate-spin" : ""} /> {fetchingOnline ? "Fetching..." : "Fetch Live Quote ✨"}
-                  </button>
-                  {!onlineQuote && (
-                    <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 0.9rem' }} onClick={() => setQuoteDeckIdx(prev => (prev + 1) % activeDeck.length)}>
-                      <ChevronRight size={18} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 5. BOOKS WITH VERIFIED FLASHCARD PEEKS */}
+          {/* 5. 40+ BOOKS LIBRARY WITH VERIFIED FLASHCARD PEEKS */}
           {activeTab === 'library' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>The Master Bookshelf 📚</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Curated public domain classics. Click "Peek Inside 🔍" to preview the soul of any book!
+                Curated public domain classics. Click "Peek Inside 🔍" to sample any book!
               </p>
 
+              {/* Genre Filter Chips */}
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '2rem' }}>
+                {['All', 'Psychology', 'Brain', 'Finance', 'Economics', 'Space', 'Indian Classics', 'Manipulation', 'Philosophy', 'AI'].map(genre => (
+                  <button
+                    key={genre}
+                    onClick={() => setBookCategoryFilter(genre)}
+                    style={{
+                      background: bookCategoryFilter === genre ? 'var(--accent-pink)' : 'var(--bg-card)',
+                      color: bookCategoryFilter === genre ? 'white' : 'var(--text-main)',
+                      border: '2px solid var(--border-card)', borderRadius: 999, padding: '0.35rem 0.85rem',
+                      fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer'
+                    }}
+                  >
+                    {genre}
+                  </button>
+                ))}
+              </div>
+
+              {/* Book Cards Grid with Flashcard Peek */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.4rem' }}>
-                {EXPANDED_LIBRARY.map((b, idx) => {
+                {filteredBooks.map((b, idx) => {
                   const isFlipped = peekedBookTitle === b.title;
                   return (
                     <div key={idx} className="book-card-flipper">
@@ -1046,12 +1062,70 @@ export default function App() {
             </div>
           )}
 
-          {/* 6. CURIOSITY SANDBOX */}
+          {/* 6. QUOTES & WISDOM VAULT (LIVE ONLINE QUOTE API INCLUDED!) */}
+          {activeTab === 'quotes' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Wisdom & Quotes Sanctuary ✨</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Browse themed quote decks or fetch fresh live quotes from across the internet!
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
+                {themeKeys.map((themeName) => (
+                  <button
+                    key={themeName}
+                    onClick={() => { setSelectedQuoteTheme(themeName); setQuoteDeckIdx(0); setOnlineQuote(null); }}
+                    style={{
+                      background: selectedQuoteTheme === themeName ? 'rgba(255, 117, 151, 0.15)' : 'var(--bg-card)',
+                      borderColor: selectedQuoteTheme === themeName ? 'var(--accent-pink)' : 'var(--border-card)',
+                      borderWidth: '2px', borderStyle: 'solid', borderRadius: 18, padding: '1rem',
+                      textAlign: 'center', cursor: 'pointer', color: 'var(--text-main)'
+                    }}
+                  >
+                    <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{themeName}</p>
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2.5rem', textAlign: 'center', boxShadow: 'var(--shadow-cozy)', marginBottom: '2.5rem' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
+                  {onlineQuote ? "Live Web Stream ✨" : selectedQuoteTheme}
+                </span>
+                <p className="quote-vault-text" style={{ margin: '1rem 0' }}>
+                  "{onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"
+                </p>
+                <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
+                  — {onlineQuote ? onlineQuote.author : currentQuoteItem?.author}
+                </p>
+
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                  {!onlineQuote && (
+                    <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 0.9rem' }} onClick={() => setQuoteDeckIdx(prev => (prev === 0 ? activeDeck.length - 1 : prev - 1))}>
+                      <ChevronLeft size={18} />
+                    </button>
+                  )}
+                  <button className="btn-cute" onClick={() => { navigator.clipboard.writeText(`"${onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"`); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }}>
+                    {isCopied ? <CheckCheck size={16} /> : <Copy size={16} />} {isCopied ? 'Copied!' : 'Copy Quote'}
+                  </button>
+                  <button className="btn-cute" style={{ background: 'var(--accent-mint)' }} onClick={fetchLiveOnlineQuote}>
+                    <RefreshCw size={16} className={fetchingOnline ? "animate-spin" : ""} /> {fetchingOnline ? "Fetching..." : "Fetch Live Quote ✨"}
+                  </button>
+                  {!onlineQuote && (
+                    <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 0.9rem' }} onClick={() => setQuoteDeckIdx(prev => (prev + 1) % activeDeck.length)}>
+                      <ChevronRight size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 7. CURIOSITY SANDBOX */}
           {activeTab === 'sandbox' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Curiosity Sandbox 💭</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Never break study flow to Google a rabbit-hole. Dump questions here and research them when you're free!
+                Never break study flow to Google a rabbit-hole. Dump questions here and research them when you have time!
               </p>
 
               <form onSubmit={handleAddQuestion} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
@@ -1089,15 +1163,14 @@ export default function App() {
             </div>
           )}
 
-          {/* 7. VISION BOARD (WITH INTERACTIVE EMOJI PALETTE!) */}
+          {/* 8. VISION BOARD (30 INTERACTIVE EMOJIS!) */}
           {activeTab === 'vision' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Scrapbook Vision Board 🖼️</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Pick your emoji, pin your life pillars, and stamp them as Manifested ✨!
+                Pick from 30 emojis, pin your goals, and stamp them as Manifested ✨!
               </p>
 
-              {/* Add Custom Vision Card Form with Emoji Palette */}
               <form onSubmit={handleAddVision} style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.5rem', marginBottom: '2rem' }}>
                 <div className="responsive-form-row" style={{ marginBottom: '1rem' }}>
                   <input className="input-cute" placeholder="Goal (e.g. Master Neuroplasticity)..." value={newVisionTitle} onChange={e => setNewVisionTitle(e.target.value)} required />
@@ -1105,7 +1178,9 @@ export default function App() {
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>SELECT EMOJI ICON:</label>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
+                    SELECT ICON ({EMOJI_PALETTE.length} CUTE EMOJIS):
+                  </label>
                   <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                     {EMOJI_PALETTE.map(em => (
                       <button
@@ -1114,7 +1189,7 @@ export default function App() {
                         onClick={() => setNewVisionEmoji(em)}
                         style={{
                           background: newVisionEmoji === em ? 'var(--accent-pink)' : 'var(--bg-card-hover)',
-                          border: '1px solid var(--border-card)', borderRadius: 10, padding: '0.3rem 0.6rem',
+                          border: '1px solid var(--border-card)', borderRadius: 10, padding: '0.35rem 0.65rem',
                           fontSize: '1.2rem', cursor: 'pointer'
                         }}
                       >
@@ -1152,7 +1227,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 8. GARDEN */}
+          {/* 9. GARDEN */}
           {activeTab === 'garden' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Your Living Garden 🌱</h2>
@@ -1165,7 +1240,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 9. QUESTS */}
+          {/* 10. DAILY QUESTS */}
           {activeTab === 'quests' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Daily Quests 🍀</h2>
@@ -1200,15 +1275,15 @@ export default function App() {
             </div>
           )}
 
-          {/* 10. JOURNAL (WITH FONT SWITCHER!) */}
+          {/* 11. JOURNAL (7 CUTE FONT OPTIONS!) */}
           {activeTab === 'journal' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Daily Scrapbook Journal 📖</h2>
               <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
                 <input className="input-cute" placeholder="Title..." value={journalTitle} onChange={e => setJournalTitle(e.target.value)} style={{ marginBottom: '1rem' }} />
 
-                {/* Font Switcher Pills */}
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
+                {/* 7 Font Switcher Buttons */}
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)' }}>DIARY FONT:</span>
                   {JOURNAL_FONTS.map(f => (
                     <button

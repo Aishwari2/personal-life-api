@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Comfortaa:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Courier+Prime&family=Lora:ital,wght@0,500;1,400&family=Quicksand:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Comfortaa:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Courier+Prime&family=Gaegu:wght@700&family=Indie+Flower&family=Lora:ital,wght@0,500;1,400&family=Quicksand:wght@500;600;700&family=Sacramento&display=swap');
 
 :root[data-theme="dark"] {
   --bg-app: #12101a;
@@ -56,7 +56,6 @@ h3,
   font-weight: 700;
 }
 
-/* Master Layout */
 .little-life-shell {
   display: flex;
   min-height: 100vh;
@@ -64,7 +63,6 @@ h3,
   overflow-x: hidden;
 }
 
-/* Desktop Sidebar */
 .scrapbook-sidebar {
   width: 320px;
   background: var(--bg-sidebar);
@@ -76,7 +74,6 @@ h3,
   flex-shrink: 0;
 }
 
-/* Centered Canvas */
 .scrapbook-canvas {
   flex: 1;
   padding: 2.5rem 2rem;
@@ -94,7 +91,7 @@ h3,
   flex-direction: column;
 }
 
-/* Centered Jelly Navigation Row */
+/* JELLY ROW: PERFECTLY CENTERED ON LAPTOPS, SMOOTH SCROLL ON MOBILE */
 .jelly-row-wrapper {
   width: 100%;
   display: flex;
@@ -187,7 +184,6 @@ h3,
   color: var(--accent-pink);
 }
 
-/* Mobile Layout */
 @media (max-width: 860px) {
   .little-life-shell {
     flex-direction: column-reverse;
@@ -203,10 +199,6 @@ h3,
   .scrapbook-canvas {
     padding: 1.5rem 1rem;
     width: 100%;
-  }
-
-  .jelly-row-wrapper {
-    margin-bottom: 1.5rem;
   }
 
   .jelly-sticker {
@@ -233,7 +225,7 @@ h3,
   }
 }
 
-/* Book Flashcard Cards */
+/* Books & Flashcard Peek */
 .book-card-flipper {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -265,7 +257,6 @@ h3,
   border-left: 3px solid var(--accent-pink);
 }
 
-/* Quote Vault Typography */
 .quote-vault-text {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.75rem;
@@ -274,29 +265,46 @@ h3,
   color: var(--text-main);
 }
 
-/* Journal Custom Fonts */
+/* 7 JOURNAL STYLES */
+.journal-font-cute {
+  font-family: 'Quicksand', sans-serif !important;
+  font-size: 0.95rem !important;
+}
+
 .journal-font-handwritten {
   font-family: 'Caveat', cursive !important;
-  font-size: 1.35rem !important;
+  font-size: 1.4rem !important;
+  line-height: 1.5 !important;
+}
+
+.journal-font-indie {
+  font-family: 'Indie Flower', cursive !important;
+  font-size: 1.15rem !important;
   line-height: 1.6 !important;
+}
+
+.journal-font-gaegu {
+  font-family: 'Gaegu', cursive !important;
+  font-size: 1.25rem !important;
+  font-weight: 700;
+  line-height: 1.5 !important;
+}
+
+.journal-font-script {
+  font-family: 'Sacramento', cursive !important;
+  font-size: 1.6rem !important;
+  line-height: 1.4 !important;
 }
 
 .journal-font-typewriter {
   font-family: 'Courier Prime', monospace !important;
   font-size: 0.95rem !important;
-  line-height: 1.7 !important;
 }
 
 .journal-font-bookish {
   font-family: 'Lora', serif !important;
   font-size: 1rem !important;
   line-height: 1.7 !important;
-}
-
-.journal-font-cute {
-  font-family: 'Quicksand', sans-serif !important;
-  font-size: 0.95rem !important;
-  line-height: 1.6 !important;
 }
 
 /* Calendar */
@@ -609,7 +617,41 @@ h3,
   margin-bottom: 0.85rem;
 }
 
-/* Question Cards */
+/* Achievements Cabinet Grid */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.25rem;
+}
+
+.badge-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: var(--shadow-cozy);
+}
+
+.badge-card.locked {
+  opacity: 0.45;
+  filter: grayscale(0.7);
+}
+
+.badge-icon {
+  font-size: 2.2rem;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: var(--bg-card-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .question-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
