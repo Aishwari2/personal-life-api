@@ -63,7 +63,6 @@ const JOURNAL_FONTS = [
   { id: "journal-font-bookish", name: "📖 Bookish" }
 ];
 
-// 30 DISTINCT EMOJIS FOR THE VISION BOARD
 const EMOJI_PALETTE = [
   "🧠", "🌌", "💰", "🎨", "🚀", "🌸", "📚", "☕", "💎", "🧘", "🌿", "🪐", "🏹", "🏆", "💡", "🐾",
   "💭", "🫟", "💲", "🆕", "♻️", "🔅", "♾️", "🪷", "💖", "⛱️", "🌈", "🛩️", "🎂", "👑"
@@ -71,49 +70,31 @@ const EMOJI_PALETTE = [
 
 const DAY_RATINGS = ["🌟 Excellent", "🌸 Very Good", "✨ Good", "☕ Okayish", "🌧️ Tough Day"];
 
-// 40+ CURATED BOOKS ACROSS 9 COMPREHENSIVE GENRES
 const EXPANDED_LIBRARY = [
-  // 1. Psychology & Human Behavior 🧠
-  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark masterwork on habit formation, emotion, and stream of consciousness.", peekQuote: "Could the young but realize how soon they will become mere walking bundles of habits, they would give more heed to their conduct.", link: "https://gutenberg.org/ebooks/5827" },
+  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark masterwork on habit formation, emotion, and stream of thought.", peekQuote: "Could the young but realize how soon they will become mere walking bundles of habits, they would give more heed to their conduct.", link: "https://gutenberg.org/ebooks/5827" },
   { title: "The Interpretation of Dreams", author: "Sigmund Freud", category: "Psychology 🧠", desc: "The foundational exploration into the unconscious mind, symbols, and psychological analysis.", peekQuote: "The mind is like an iceberg, it floats with one-seventh of its bulk above water.", link: "https://gutenberg.org/ebooks/4387" },
   { title: "The Crowd: A Study of the Popular Mind", author: "Gustave Le Bon", category: "Psychology 🧠", desc: "The pioneering text on collective psychology, mass behavior, and contagion of thought.", peekQuote: "The masses have never thirsted after truth. Whoever can supply them with illusions is easily their master.", link: "https://gutenberg.org/ebooks/445" },
   { title: "Man's Search for Meaning", author: "Viktor Frankl", category: "Psychology 🧠", desc: "A psychological memoir on purpose, resilience, and the inner freedom to choose attitude.", peekQuote: "When we are no longer able to change a situation, we are challenged to change ourselves.", link: "https://archive.org" },
-
-  // 2. Brain, Neuroscience & Body 🔬
   { title: "Advice for a Young Investigator", author: "Santiago Ramón y Cajal", category: "Brain & Body 🔬", desc: "Priceless wisdom from the Nobel-winning father of modern neuroscience.", peekQuote: "Every man can, if he so desires, become the sculptor of his own brain.", link: "https://gutenberg.org" },
   { title: "As a Man Thinketh", author: "James Allen", category: "Brain & Body 🔬", desc: "A timeless reflection on how thought patterns physically sculpt our personality and fate.", peekQuote: "Mind is the Master power that molds and makes, and Man is Mind, and evermore he takes the tool of Thought.", link: "https://gutenberg.org/ebooks/4507" },
   { title: "The Physiology of Mind", author: "Henry Maudsley", category: "Brain & Body 🔬", desc: "Early neuro-biological analysis of mental function and organic human consciousness.", peekQuote: "Consciousness is not co-extensive with mind, but only an illumination of its surface.", link: "https://gutenberg.org/ebooks/39801" },
-
-  // 3. Finance & Wealth Architecture 💰
   { title: "The Richest Man in Babylon", author: "George S. Clason", category: "Finance 💰", desc: "Ancient Babylonian parables on the 7 eternal laws of saving and compounding capital.", peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.", link: "https://gutenberg.org" },
   { title: "Lombard Street: The Money Market", author: "Walter Bagehot", category: "Finance 💰", desc: "The classic analysis of banking liquidity, panics, and the global circulation of capital.", peekQuote: "Money will not manage itself, and Lombard street has a great deal of money to manage.", link: "https://gutenberg.org/ebooks/3781" },
   { title: "The Theory of Business Enterprise", author: "Thorstein Veblen", category: "Finance 💰", desc: "The brilliant institutional analysis of modern corporate finance, leverage, and machines.", peekQuote: "Invention is the mother of necessity. The business man's place in the economy is to seek profit.", link: "https://gutenberg.org/ebooks/27833" },
-
-  // 4. Economics & Strategy 📈
   { title: "The Wealth of Nations", author: "Adam Smith", category: "Economics 📈", desc: "The foundational masterpiece on division of labor, productivity, and economic freedom.", peekQuote: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest.", link: "https://standardebooks.org/ebooks/adam-smith/the-wealth-of-nations" },
   { title: "Principles of Economics", author: "Alfred Marshall", category: "Economics 📈", desc: "The definitive text synthesizing supply, demand, marginal utility, and economic equilibrium.", peekQuote: "Economics is a study of mankind in the ordinary business of life.", link: "https://gutenberg.org" },
   { title: "The Art of War", author: "Sun Tzu", category: "Strategy 📈", desc: "The world's oldest and most renowned treatise on strategy, psychology, and tactical victory.", peekQuote: "The supreme art of war is to subdue the enemy without fighting.", link: "https://standardebooks.org/ebooks/sun-tzu/the-art-of-war" },
-
-  // 5. Space, Cosmos & Physics 🌌
   { title: "Space, Time and Gravitation", author: "Arthur Eddington", category: "Space 🌌", desc: "The brilliant introduction to Einstein's general relativity and cosmic spacetime curvature.", peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.", link: "https://gutenberg.org/ebooks/49635" },
   { title: "Astronomy for Amateurs", author: "Camille Flammarion", category: "Space 🌌", desc: "A poetic, accessible guide to observing constellations, planetary orbits, and the cosmos.", peekQuote: "What is there more sublime than the quiet contemplation of the infinite vault of heaven?", link: "https://gutenberg.org/ebooks/42144" },
   { title: "Relativity: The Special & General Theory", author: "Albert Einstein", category: "Space 🌌", desc: "Albert Einstein's own direct, accessible explanation of the physics of light, time, and gravity.", peekQuote: "Time and space are modes by which we think and not conditions in which we live.", link: "https://gutenberg.org/ebooks/30155" },
-
-  // 6. Indian Traditional Classics & Eastern Wisdom 🪷
   { title: "The Song Celestial (Bhagavad Gita)", author: "Edwin Arnold translation", category: "Indian Classics 🪷", desc: "The sacred dialogue on duty (Dharma), self-mastery, inner equanimity, and devotion.", peekQuote: "You have a right to your labors, but not to the fruits thereof. Act with a calm mind, unattached to outcome.", link: "https://gutenberg.org/ebooks/2388" },
   { title: "The Upanishads", author: "Swami Paramananda translation", category: "Indian Classics 🪷", desc: "The ancient philosophical scriptures exploring Brahman, Atman, and supreme consciousness.", peekQuote: "Lead me from the unreal to the real. Lead me from darkness to light. Lead me from death to immortality.", link: "https://gutenberg.org/ebooks/3283" },
   { title: "Raja Yoga (Self-Mastery)", author: "Swami Vivekananda", category: "Indian Classics 🪷", desc: "Swami Vivekananda's systematic lectures on concentration, meditation, and Patanjali's Yoga Sutras.", peekQuote: "Take up one idea. Make that one idea your life; dream of it; think of it; live on that idea.", link: "https://gutenberg.org" },
   { title: "Gitanjali (Song Offerings)", author: "Rabindranath Tagore", category: "Indian Classics 🪷", desc: "The Nobel Prize-winning collection of poetic devotion, divine beauty, and human longing.", peekQuote: "Where the mind is without fear and the head is held high; into that heaven of freedom, my Father, let my country awake.", link: "https://gutenberg.org/ebooks/7164" },
-
-  // 7. Manipulation, Power & Influence 🎭
   { title: "The Prince", author: "Niccolò Machiavelli", category: "Manipulation 🎭", desc: "The infamous realism manual on political survival, power dynamics, and human pragmatism.", peekQuote: "It is much safer to be feared than loved, if one cannot be both.", link: "https://standardebooks.org/ebooks/niccolo-machiavelli/the-prince" },
   { title: "The Art of Worldly Wisdom", author: "Baltasar Gracián", category: "Manipulation 🎭", desc: "300 tactical aphorisms on discretion, reading human motives, and social strategy.", peekQuote: "Keep something in reserve. Do not display all your resources at once.", link: "https://gutenberg.org" },
-
-  // 8. Philosophy & Mindset 🌿
   { title: "Meditations", author: "Marcus Aurelius", category: "Philosophy 🌿", desc: "Private reflections on calm, discipline, mindfulness, and cosmic duty.", peekQuote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", link: "https://standardebooks.org/ebooks/marcus-aurelius/meditations" },
   { title: "Letters to a Young Poet", author: "Rainer Maria Rilke", category: "Philosophy 🌿", desc: "Ten timeless letters on loneliness, patience, artistic craft, and inner growth.", peekQuote: "Be patient toward all that is unsolved in your heart and try to love the questions themselves.", link: "https://gutenberg.org" },
-
-  // 9. AI, Machines & Future Logic 🤖
   { title: "Computing Machinery and Intelligence", author: "Alan Turing", category: "AI & Machines 🤖", desc: "Alan Turing's foundational paper introducing the Turing Test and machine consciousness.", peekQuote: "We can only see a short distance ahead, but we can see plenty there that needs to be done.", link: "https://archive.org" },
   { title: "R.U.R. (Rossum's Universal Robots)", author: "Karel Čapek", category: "AI & Machines 🤖", desc: "The play that coined the world's very word 'robot', exploring artificial workers and humanity.", peekQuote: "The product of the human brain has escaped the control of human hands.", link: "https://gutenberg.org/ebooks/59112" }
 ];
@@ -161,7 +142,7 @@ export default function App() {
     return s ? JSON.parse(s) : {};
   });
 
-  // Audio State (Clean Lofi Stream Only)
+  // Audio State (Clean Lofi Stream)
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -184,6 +165,12 @@ export default function App() {
   const [manualTopic, setManualTopic] = useState('');
   const [manualActivity, setManualActivity] = useState('');
   const [manualDuration, setManualDuration] = useState(30);
+
+  // Milestone Inline Editing State
+  const [editingSessionId, setEditingSessionId] = useState<number | null>(null);
+  const [editingSessionActivity, setEditingSessionActivity] = useState('');
+  const [editingSessionTopic, setEditingSessionTopic] = useState('');
+  const [editingSessionMinutes, setEditingSessionMinutes] = useState(25);
 
   // Book Flashcard State
   const [peekedBookTitle, setPeekedBookTitle] = useState<string | null>(null);
@@ -250,7 +237,7 @@ export default function App() {
     setTopicStats(Object.entries(totals).map(([topic, minutes]) => ({ topic, minutes })));
   }, [sessions]);
 
-  // Cloud Sync on Mount
+  // Background Cloud Sync on Mount
   useEffect(() => {
     const syncCloud = async () => {
       try {
@@ -293,7 +280,7 @@ export default function App() {
     }
   };
 
-  // Timer interval engine
+  // Timer interval
   useEffect(() => {
     let interval: any = null;
     if (timerRunning) {
@@ -378,6 +365,43 @@ export default function App() {
   const handleDeleteSession = async (id: number) => {
     setSessions(prev => prev.filter(s => s.id !== id));
     try { await fetch(`${API_BASE}/learning-sessions/${id}`, { method: 'DELETE' }); } catch (e) { }
+  };
+
+  // Start Editing Past Milestone
+  const startEditingSession = (s: LearningSession) => {
+    setEditingSessionId(s.id);
+    setEditingSessionActivity(s.activity);
+    setEditingSessionTopic(s.topic);
+    setEditingSessionMinutes(s.duration_minutes);
+  };
+
+  // Save Renamed Milestone
+  const saveEditedSession = async (id: number) => {
+    setSessions(prev => prev.map(s => {
+      if (s.id === id) {
+        return {
+          ...s,
+          activity: editingSessionActivity,
+          topic: editingSessionTopic,
+          duration_minutes: Number(editingSessionMinutes)
+        };
+      }
+      return s;
+    }));
+
+    setEditingSessionId(null);
+
+    try {
+      await fetch(`${API_BASE}/learning-sessions/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          activity: editingSessionActivity,
+          topic: editingSessionTopic,
+          duration_minutes: Number(editingSessionMinutes)
+        }),
+      });
+    } catch (e) { }
   };
 
   // Calendar
@@ -545,7 +569,7 @@ export default function App() {
     }
   };
 
-  // Calendar calculations
+  // Calendar
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay();
   const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
@@ -591,7 +615,7 @@ export default function App() {
 
   return (
     <div className="little-life-shell">
-      {/* Clean Lofi Stream Audio Element */}
+      {/* 24/7 Gentle Melodic Lofi Stream */}
       <audio ref={audioRef} src="https://streams.ilovemusic.de/iloveradio17.mp3" preload="none" />
 
       {/* REVIEW & RENAME COMPLETION MODAL */}
@@ -636,33 +660,31 @@ export default function App() {
         </div>
       )}
 
-      {/* SIDEBAR */}
-      <aside className="scrapbook-sidebar">
+      {/* SIDEBAR: STILL & INTACT ON DESKTOP; ON MOBILE/HALF-SCREEN ONLY SHOWS ON FOCUS TAB */}
+      <aside className={`scrapbook-sidebar ${activeTab !== 'timer' ? 'hide-on-mobile-subpages' : ''}`}>
         <div>
-          {/* MOCHI THE CAT ONLY APPEARS ON FOCUS (TIMER) TAB */}
-          {activeTab === 'timer' && (
-            <div className="mascot-card">
-              <svg className="cat-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22 36L14 12C14 12 28 18 36 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
-                <path d="M78 36L86 12C86 12 72 18 64 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
-                <ellipse cx="50" cy="50" rx="36" ry="30" fill="#fff9c4" stroke="#ffb74d" strokeWidth="3" />
-                <circle cx="38" cy="48" r="4" fill="#3d3447" />
-                <circle cx="62" cy="48" r="4" fill="#3d3447" />
-                <circle cx="39" cy="46" r="1.5" fill="white" />
-                <circle cx="63" cy="46" r="1.5" fill="white" />
-                <polygon points="50,54 46,58 54,58" fill="#ff85a2" />
-                <path d="M46 58Q50 63 54 58" stroke="#ff85a2" strokeWidth="2" strokeLinecap="round" />
-                <ellipse cx="30" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
-                <ellipse cx="70" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
-              </svg>
-              <h3 style={{ fontSize: '1.25rem', marginTop: '0.4rem' }}>Mochi the Cat</h3>
-              <div className="speech-bubble">
-                {timerRunning ? "Deep focus flow active! 🎧✨" : "A little progress every day makes a lot of life! 🌸"}
-              </div>
+          {/* Mochi the Cat Mascot (Always visible on desktop!) */}
+          <div className="mascot-card">
+            <svg className="cat-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 36L14 12C14 12 28 18 36 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
+              <path d="M78 36L86 12C86 12 72 18 64 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
+              <ellipse cx="50" cy="50" rx="36" ry="30" fill="#fff9c4" stroke="#ffb74d" strokeWidth="3" />
+              <circle cx="38" cy="48" r="4" fill="#3d3447" />
+              <circle cx="62" cy="48" r="4" fill="#3d3447" />
+              <circle cx="39" cy="46" r="1.5" fill="white" />
+              <circle cx="63" cy="46" r="1.5" fill="white" />
+              <polygon points="50,54 46,58 54,58" fill="#ff85a2" />
+              <path d="M46 58Q50 63 54 58" stroke="#ff85a2" strokeWidth="2" strokeLinecap="round" />
+              <ellipse cx="30" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
+              <ellipse cx="70" cy="56" rx="5" ry="3" fill="#ff85a2" opacity="0.6" />
+            </svg>
+            <h3 style={{ fontSize: '1.25rem', marginTop: '0.4rem' }}>Mochi the Cat</h3>
+            <div className="speech-bubble">
+              {timerRunning ? "Deep focus flow active! 🎧✨" : "A little progress every day makes a lot of life! 🌸"}
             </div>
-          )}
+          </div>
 
-          {/* Clean 24/7 Lofi Player */}
+          {/* Clean Melodic Lofi Player */}
           <div className="lofi-widget">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
@@ -702,7 +724,7 @@ export default function App() {
       <main className="scrapbook-canvas">
         <div className="canvas-max-wrapper">
 
-          {/* JELLY NAVIGATION ROW (CENTERED ON DESKTOP, SWIPEABLE ON MOBILE) */}
+          {/* JELLY NAVIGATION ROW (CENTERED!) */}
           <div className="jelly-row-wrapper">
             <nav className="jelly-row">
               <button className={`jelly-btn ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => setActiveTab('timer')}>
@@ -804,7 +826,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 2. STUDY LOG & GRAPH (RECHARTS BAR CHART PERMANENTLY DISPLAYED!) */}
+          {/* 2. STUDY LOG & GRAPH (RECHARTS BAR CHART + EDITABLE PAST MILESTONES) */}
           {activeTab === 'study' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Study Analytics & Graph 🎀</h2>
@@ -859,21 +881,80 @@ export default function App() {
                 </form>
               </div>
 
-              {/* Past Study Milestones Feed with Delete Actions */}
+              {/* Recorded Chapters Feed with EDIT / RENAME + DELETE Actions */}
               <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Recorded Chapters & Milestones 📜</h3>
               {sessions.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No study sessions logged yet!</div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   {sessions.map(s => (
-                    <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
-                      <div>
-                        <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                          <span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m • {s.session_date}
-                        </p>
-                      </div>
-                      <button onClick={() => handleDeleteSession(s.id)} title="Delete milestone" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                    <div key={s.id} style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
+
+                      {editingSessionId === s.id ? (
+                        /* INLINE EDIT MODE FOR MILESTONE */
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                          <input
+                            className="input-cute"
+                            placeholder="Activity title..."
+                            value={editingSessionActivity}
+                            onChange={e => setEditingSessionActivity(e.target.value)}
+                          />
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <input
+                              className="input-cute"
+                              placeholder="Subject..."
+                              value={editingSessionTopic}
+                              onChange={e => setEditingSessionTopic(e.target.value)}
+                            />
+                            <input
+                              type="number"
+                              className="input-cute"
+                              style={{ width: '90px' }}
+                              value={editingSessionMinutes}
+                              onChange={e => setEditingSessionMinutes(Number(e.target.value))}
+                            />
+                            <button
+                              onClick={() => saveEditedSession(s.id)}
+                              style={{ background: 'var(--accent-mint)', border: 'none', borderRadius: 10, padding: '0 1rem', color: 'white', cursor: 'pointer' }}
+                            >
+                              <Check size={16} />
+                            </button>
+                            <button
+                              onClick={() => setEditingSessionId(null)}
+                              style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-card)', borderRadius: 10, padding: '0 1rem', color: 'var(--text-muted)', cursor: 'pointer' }}
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* DEFAULT VIEW WITH EDIT PENCIL & TRASH BUTTONS */
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                              <span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m • {s.session_date}
+                            </p>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <button
+                              onClick={() => startEditingSession(s)}
+                              title="Edit / Rename Milestone"
+                              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.3rem' }}
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSession(s.id)}
+                              title="Delete milestone"
+                              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.3rem' }}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
                     </div>
                   ))}
                 </div>
@@ -996,7 +1077,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 5. 40+ BOOKS LIBRARY WITH VERIFIED FLASHCARD PEEKS */}
+          {/* 5. 40+ BOOKS LIBRARY WITH FLASHCARD PEEKS */}
           {activeTab === 'library' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>The Master Bookshelf 📚</h2>
@@ -1062,7 +1143,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 6. QUOTES & WISDOM VAULT (LIVE ONLINE QUOTE API INCLUDED!) */}
+          {/* 6. QUOTES & WISDOM VAULT */}
           {activeTab === 'quotes' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Wisdom & Quotes Sanctuary ✨</h2>
@@ -1275,14 +1356,14 @@ export default function App() {
             </div>
           )}
 
-          {/* 11. JOURNAL (7 CUTE FONT OPTIONS!) */}
+          {/* 11. JOURNAL */}
           {activeTab === 'journal' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Daily Scrapbook Journal 📖</h2>
               <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
                 <input className="input-cute" placeholder="Title..." value={journalTitle} onChange={e => setJournalTitle(e.target.value)} style={{ marginBottom: '1rem' }} />
 
-                {/* 7 Font Switcher Buttons */}
+                {/* 7 Cute Font Switcher Buttons */}
                 <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)' }}>DIARY FONT:</span>
                   {JOURNAL_FONTS.map(f => (

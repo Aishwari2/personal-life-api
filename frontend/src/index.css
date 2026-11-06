@@ -189,6 +189,11 @@ h3,
     flex-direction: column-reverse;
   }
 
+  /* On mobile / half-screens only: hide sidebar on subpages */
+  .scrapbook-sidebar.hide-on-mobile-subpages {
+    display: none !important;
+  }
+
   .scrapbook-sidebar {
     width: 100%;
     border-right: none;
