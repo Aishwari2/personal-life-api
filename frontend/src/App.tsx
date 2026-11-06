@@ -3,7 +3,7 @@ import {
   Play, Pause, Trash2, Sun, Moon,
   Check, RotateCcw, BarChart2, ChevronLeft, ChevronRight,
   ExternalLink, Copy, CheckCheck, RefreshCw,
-  Edit3, X
+  Edit3, X, Star, Calendar as CalendarIcon
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
@@ -21,6 +21,7 @@ interface JournalEntry {
   title: string;
   content: string;
   mood?: string;
+  fontStyle?: string;
   created_at: string;
 }
 
@@ -47,65 +48,45 @@ interface VisionPillar {
   manifested: boolean;
 }
 
+interface DayRating {
+  date: string;
+  rating: string;
+  note?: string;
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 const PASTEL_BARS = ['#ff85a2', '#b39ddb', '#80cbc4', '#ffe082', '#ffab91', '#90caf9'];
 
 const JOURNAL_MOOD_STICKERS = ["🌸 Joyful", "☕ Cozy", "🌙 Midnight", "💡 Eureka!", "🌱 Growing", "🧘 Serene"];
 
-// 3 PURE CALM AUDIO CHANNELS (No jungle ambient, no bagpipes!)
+const JOURNAL_FONTS = [
+  { id: "journal-font-cute", name: "🌸 Cute Rounded" },
+  { id: "journal-font-handwritten", name: "✍️ Handwritten" },
+  { id: "journal-font-typewriter", name: "📟 Typewriter" },
+  { id: "journal-font-bookish", name: "📖 Bookish" }
+];
+
+const EMOJI_PALETTE = ["🧠", "🌌", "💰", "🎨", "🚀", "🌸", "📚", "☕", "💎", "🧘", "🌿", "🪐", "🏹", "🏆", "💡", "🐾"];
+
+const DAY_RATINGS = ["🌟 Excellent", "🌸 Very Good", "✨ Good", "☕ Okayish", "🌧️ Tough Day"];
+
+// 2 Reliable Streams (No Jungle Audio)
 const AUDIO_CHANNELS = [
   { name: "☕ Lofi Beats", url: "https://streams.ilovemusic.de/iloveradio17.mp3", desc: "Melodic study beats" },
-  { name: "🎹 Solo Piano", url: "https://stream.klassikradio.de/piano/mp3-128/", desc: "Pure acoustic solo piano" },
-  { name: "🌧️ Soft Rain", url: "https://ia800301.us.archive.org/15/items/RainSounds10HoursTheSoundOfRainMeditation_201604/RainSounds10HoursTheSoundOfRainMeditation.mp3", desc: "Gentle rainstorm" }
+  { name: "🌧️ Soft Rain", url: "https://actions.google.com/sounds/v1/weather/rain_heavy.ogg", desc: "Pure gentle rain" }
 ];
 
-// 40+ CURATED BOOKS WITH AUTHENTIC HISTORICAL PEEK EXCERPTS
 const EXPANDED_LIBRARY = [
-  // 1. Psychology & Human Behavior 🧠
-  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark masterwork on habit formation, emotion, and stream of thought.", peekQuote: "Could the young but realize how soon they will become mere walking bundles of habits, they would give more heed to their conduct while in the plastic state.", link: "https://gutenberg.org/ebooks/5827" },
-  { title: "The Interpretation of Dreams", author: "Sigmund Freud", category: "Psychology 🧠", desc: "The foundational exploration into the unconscious mind, symbols, and psychological analysis.", peekQuote: "The mind is like an iceberg, it floats with one-seventh of its bulk above water.", link: "https://gutenberg.org/ebooks/4387" },
-  { title: "The Crowd: A Study of the Popular Mind", author: "Gustave Le Bon", category: "Psychology 🧠", desc: "The pioneering text on collective psychology, mass behavior, and contagion of thought.", peekQuote: "The masses have never thirsted after truth. Whoever can supply them with illusions is easily their master.", link: "https://gutenberg.org/ebooks/445" },
-  { title: "Man's Search for Meaning", author: "Viktor Frankl", category: "Psychology 🧠", desc: "A psychological memoir on purpose, resilience, and the inner freedom to choose attitude.", peekQuote: "When we are no longer able to change a situation, we are challenged to change ourselves.", link: "https://archive.org" },
-
-  // 2. Brain, Neuroscience & Body 🔬
-  { title: "Advice for a Young Investigator", author: "Santiago Ramón y Cajal", category: "Brain & Body 🔬", desc: "Priceless wisdom from the father of modern neuroscience on curiosity, patience, and intellect.", peekQuote: "Every man can, if he so desires, become the sculptor of his own brain.", link: "https://gutenberg.org" },
-  { title: "As a Man Thinketh", author: "James Allen", category: "Brain & Body 🔬", desc: "A timeless reflection on how thought patterns physically sculpt our personality and fate.", peekQuote: "Mind is the Master power that molds and makes, and Man is Mind, and evermore he takes the tool of Thought.", link: "https://gutenberg.org/ebooks/4507" },
-  { title: "The Physiology of Mind", author: "Henry Maudsley", category: "Brain & Body 🔬", desc: "Early neuro-biological analysis of mental function and organic human consciousness.", peekQuote: "Consciousness is not co-extensive with mind, but only an illumination of its surface.", link: "https://gutenberg.org/ebooks/39801" },
-
-  // 3. Finance & Wealth Architecture 💰
-  { title: "The Richest Man in Babylon", author: "George S. Clason", category: "Finance 💰", desc: "Ancient Babylonian parables on the 7 eternal laws of saving and compounding capital.", peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.", link: "https://gutenberg.org" },
-  { title: "Lombard Street: The Money Market", author: "Walter Bagehot", category: "Finance 💰", desc: "The classic analysis of banking liquidity, panics, and the global circulation of capital.", peekQuote: "Money will not manage itself, and Lombard street has a great deal of money to manage.", link: "https://gutenberg.org/ebooks/3781" },
-  { title: "The Theory of Business Enterprise", author: "Thorstein Veblen", category: "Finance 💰", desc: "The brilliant institutional analysis of modern corporate finance, leverage, and machines.", peekQuote: "Invention is the mother of necessity. The business man's place in the economy is to seek profit.", link: "https://gutenberg.org/ebooks/27833" },
-
-  // 4. Economics & Strategy 📈
-  { title: "The Wealth of Nations", author: "Adam Smith", category: "Economics 📈", desc: "The foundational masterpiece on division of labor, productivity, and economic freedom.", peekQuote: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest.", link: "https://standardebooks.org/ebooks/adam-smith/the-wealth-of-nations" },
-  { title: "The Art of War", author: "Sun Tzu", category: "Strategy 📈", desc: "The world's oldest and most renowned treatise on strategy, psychology, and tactical victory.", peekQuote: "The supreme art of war is to subdue the enemy without fighting.", link: "https://standardebooks.org/ebooks/sun-tzu/the-art-of-war" },
-
-  // 5. Space, Cosmos & Physics 🌌
-  { title: "Space, Time and Gravitation", author: "Arthur Eddington", category: "Space 🌌", desc: "The brilliant introduction to Einstein's general relativity and cosmic spacetime curvature.", peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.", link: "https://gutenberg.org/ebooks/49635" },
-  { title: "Astronomy for Amateurs", author: "Camille Flammarion", category: "Space 🌌", desc: "A poetic, accessible guide to observing constellations, planetary orbits, and the cosmos.", peekQuote: "What is there more sublime than the quiet contemplation of the infinite vault of heaven?", link: "https://gutenberg.org/ebooks/42144" },
-  { title: "Relativity: The Special & General Theory", author: "Albert Einstein", category: "Space 🌌", desc: "Albert Einstein's own direct, accessible explanation of the physics of light, time, and gravity.", peekQuote: "Time and space are modes by which we think and not conditions in which we live.", link: "https://gutenberg.org/ebooks/30155" },
-
-  // 6. Indian Traditional Classics & Eastern Wisdom 🪷
-  { title: "The Song Celestial (Bhagavad Gita)", author: "Edwin Arnold translation", category: "Indian Classics 🪷", desc: "The sacred dialogue on duty (Dharma), self-mastery, inner equanimity, and devotion.", peekQuote: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions.", link: "https://gutenberg.org/ebooks/2388" },
-  { title: "The Upanishads", author: "Swami Paramananda translation", category: "Indian Classics 🪷", desc: "The ancient philosophical scriptures exploring Brahman, Atman, and supreme consciousness.", peekQuote: "Lead me from the unreal to the real. Lead me from darkness to light. Lead me from death to immortality.", link: "https://gutenberg.org/ebooks/3283" },
-  { title: "Raja Yoga (Self-Mastery)", author: "Swami Vivekananda", category: "Indian Classics 🪷", desc: "Swami Vivekananda's systematic lectures on concentration, meditation, and Patanjali's Yoga Sutras.", peekQuote: "Take up one idea. Make that one idea your life; dream of it; think of it; live on that idea.", link: "https://gutenberg.org" },
-  { title: "Gitanjali (Song Offerings)", author: "Rabindranath Tagore", category: "Indian Classics 🪷", desc: "The Nobel Prize-winning collection of poetic devotion, divine beauty, and human longing.", peekQuote: "Where the mind is without fear and the head is held high; into that heaven of freedom, my Father, let my country awake.", link: "https://gutenberg.org/ebooks/7164" },
-
-  // 7. Manipulation, Power & Influence 🎭
-  { title: "The Prince", author: "Niccolò Machiavelli", category: "Manipulation 🎭", desc: "The infamous realism manual on political survival, power dynamics, and human pragmatism.", peekQuote: "It is much safer to be feared than loved, if one cannot be both.", link: "https://standardebooks.org/ebooks/niccolo-machiavelli/the-prince" },
-  { title: "The Art of Worldly Wisdom", author: "Baltasar Gracián", category: "Manipulation 🎭", desc: "300 tactical aphorisms on discretion, reading human motives, and social strategy.", peekQuote: "Keep something in reserve. Do not display all your resources at once.", link: "https://gutenberg.org" },
-
-  // 8. Philosophy & Mindset 🌿
-  { title: "Meditations", author: "Marcus Aurelius", category: "Philosophy 🌿", desc: "Private emperor reflections on calm, discipline, mindfulness, and cosmic duty.", peekQuote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", link: "https://standardebooks.org/ebooks/marcus-aurelius/meditations" },
-  { title: "Letters to a Young Poet", author: "Rainer Maria Rilke", category: "Philosophy 🌿", desc: "Ten timeless letters on loneliness, patience, artistic craft, and inner growth.", peekQuote: "Be patient toward all that is unsolved in your heart and try to love the questions themselves.", link: "https://gutenberg.org" },
-
-  // 9. AI, Machines & Future Logic 🤖
-  { title: "Computing Machinery and Intelligence", author: "Alan Turing", category: "AI & Machines 🤖", desc: "Alan Turing's foundational paper introducing the Turing Test and machine consciousness.", peekQuote: "We can only see a short distance ahead, but we can see plenty there that needs to be done.", link: "https://archive.org" },
-  { title: "R.U.R. (Rossum's Universal Robots)", author: "Karel Čapek", category: "AI & Machines 🤖", desc: "The play that coined the world's very word 'robot', exploring artificial workers and humanity.", peekQuote: "The product of the human brain has escaped the control of human hands.", link: "https://gutenberg.org/ebooks/59112" }
+  { title: "The Principles of Psychology", author: "William James", category: "Psychology 🧠", desc: "The landmark text on habit formation, emotion, and stream of thought.", peekQuote: "Could the young but realize how soon they will become mere walking bundles of habits, they would give more heed to their conduct.", link: "https://gutenberg.org/ebooks/5827" },
+  { title: "Advice for a Young Investigator", author: "Santiago Ramón y Cajal", category: "Brain & Body 🔬", desc: "Priceless wisdom from the Nobel-winning father of modern neuroscience.", peekQuote: "Every man can, if he so desires, become the sculptor of his own brain.", link: "https://gutenberg.org" },
+  { title: "The Richest Man in Babylon", author: "George S. Clason", category: "Finance 💰", desc: "Ancient parables outlining the core laws of saving and compounding capital.", peekQuote: "A part of all you earn is yours to keep. Gold clingeth to the protection of the cautious owner.", link: "https://gutenberg.org" },
+  { title: "The Wealth of Nations", author: "Adam Smith", category: "Economics 📈", desc: "The foundational masterpiece on division of labor, productivity, and markets.", peekQuote: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest.", link: "https://standardebooks.org/ebooks/adam-smith/the-wealth-of-nations" },
+  { title: "Space, Time and Gravitation", author: "Arthur Eddington", category: "Space 🌌", desc: "An accessible introduction to general relativity and cosmic spacetime curvature.", peekQuote: "We have found a strange footprint on the shores of the unknown... and lo, it is our own.", link: "https://gutenberg.org/ebooks/49635" },
+  { title: "The Song Celestial (Bhagavad Gita)", author: "Edwin Arnold translation", category: "Indian Classics 🪷", desc: "The sacred dialogue on duty, inner equanimity, and self-mastery.", peekQuote: "You have a right to your labors, but not to the fruits thereof. Act with a calm mind, unattached to outcome.", link: "https://gutenberg.org/ebooks/2388" },
+  { title: "The Prince", author: "Niccolò Machiavelli", category: "Manipulation 🎭", desc: "The infamous realism manual on political survival and human pragmatism.", peekQuote: "It is much safer to be feared than loved, if one cannot be both.", link: "https://standardebooks.org/ebooks/niccolo-machiavelli/the-prince" },
+  { title: "Meditations", author: "Marcus Aurelius", category: "Philosophy 🌿", desc: "Private reflections on calm, discipline, mindfulness, and cosmic duty.", peekQuote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", link: "https://standardebooks.org/ebooks/marcus-aurelius/meditations" }
 ];
 
-// Themed Quote Decks
 const QUOTE_DECKS: Record<string, { quote: string; author: string }[]> = {
   "Philosophy & Stoicism 🌿": [
     { quote: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", author: "Marcus Aurelius" },
@@ -114,17 +95,11 @@ const QUOTE_DECKS: Record<string, { quote: string; author: string }[]> = {
   ],
   "Psychology & Mind 🧠": [
     { quote: "The greatest weapon against stress is our ability to choose one thought over another.", author: "William James" },
-    { quote: "Until you make the unconscious conscious, it will direct your life and you will call it fate.", author: "Carl Jung" },
-    { quote: "Knowing your own darkness is the best method for dealing with the darknesses of other people.", author: "Carl Jung" }
+    { quote: "Until you make the unconscious conscious, it will direct your life and you will call it fate.", author: "Carl Jung" }
   ],
   "Deep Focus & Grit 🔥": [
     { quote: "Consistency always beats intensity every single time.", author: "James Clear" },
-    { quote: "Small deeds done are better than great deeds planned.", author: "Peter Marshall" },
-    { quote: "The secret of getting ahead is getting started.", author: "Mark Twain" }
-  ],
-  "Cosmos & Wonder 🌌": [
-    { quote: "The cosmos is within us. We are made of star-stuff. We are a way for the cosmos to know itself.", author: "Carl Sagan" },
-    { quote: "Look up at the stars and not down at your feet. Try to make sense of what you see.", author: "Stephen Hawking" }
+    { quote: "Small deeds done are better than great deeds planned.", author: "Peter Marshall" }
   ]
 };
 
@@ -132,20 +107,33 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [activeTab, setActiveTab] = useState<'timer' | 'study' | 'quotes' | 'library' | 'sandbox' | 'vision' | 'calendar' | 'garden' | 'quests' | 'journal'>('timer');
 
-  // Backend Data
-  const [sessions, setSessions] = useState<LearningSession[]>([]);
-  const [todos, setTodos] = useState<TodoItem[]>([]);
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
-  const [questions, setQuestions] = useState<CuriosityQuestion[]>([]);
+  // LOCAL-FIRST PERSISTENCE (Instant saving with cloud background sync!)
+  const [sessions, setSessions] = useState<LearningSession[]>(() => {
+    const saved = localStorage.getItem('localSessions');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [todos, setTodos] = useState<TodoItem[]>(() => {
+    const saved = localStorage.getItem('localTodos');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(() => {
+    const saved = localStorage.getItem('localJournal');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [questions, setQuestions] = useState<CuriosityQuestion[]>(() => {
+    const saved = localStorage.getItem('localQuestions');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [topicStats, setTopicStats] = useState<{ topic: string; minutes: number }[]>([]);
+  const [dayRatings, setDayRatings] = useState<Record<string, string>>(() => {
+    const saved = localStorage.getItem('localDayRatings');
+    return saved ? JSON.parse(saved) : {};
+  });
 
-  // Multi-Channel Audio State
+  // Audio State
   const [selectedChannelIdx, setSelectedChannelIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Desktop Notifications Toggle
-  const [alertsEnabled, setAlertsEnabled] = useState(() => localStorage.getItem('alertsEnabled') === 'true');
 
   // Timer State
   const [timerMode, setTimerMode] = useState<'stopwatch' | 'pomodoro'>('stopwatch');
@@ -162,33 +150,26 @@ export default function App() {
   const [reviewMinutes, setReviewMinutes] = useState(25);
   const [reviewMood, setReviewMood] = useState('Accomplished ✨');
 
-  // Manual Quick-Log State
+  // Manual Log State
   const [manualTopic, setManualTopic] = useState('');
   const [manualActivity, setManualActivity] = useState('');
   const [manualDuration, setManualDuration] = useState(30);
 
   // Book Flashcard Peek State
   const [peekedBookTitle, setPeekedBookTitle] = useState<string | null>(null);
-  const [bookCategoryFilter, setBookCategoryFilter] = useState('All');
-
-  // Curiosity Question State
-  const [newQuestionText, setNewQuestionText] = useState('');
-  const [questionCategory, setQuestionCategory] = useState('Brain 🧠');
 
   // Vision Board State
   const [visions, setVisions] = useState<VisionPillar[]>(() => {
     const saved = localStorage.getItem('userVisions');
-    if (saved) return JSON.parse(saved);
-    return [
-      { id: 1, title: "Psychology & Neural Mind", emoji: "🧠", goal: "Understand neural plasticity, cognitive models, and human behavior.", manifested: false },
-      { id: 2, title: "Cosmos & Astrophysics", emoji: "🌌", goal: "Explore spacetime curvature, general relativity, and quantum mechanics.", manifested: false },
-      { id: 3, title: "Financial Freedom", emoji: "💰", goal: "Master cash-flow mechanics, compounding capital, and wealth architecture.", manifested: false },
-      { id: 4, title: "Creative Software Craft", emoji: "🎨", goal: "Build digital software tools that delight the human soul.", manifested: true }
+    return saved ? JSON.parse(saved) : [
+      { id: 1, title: "Psychology & Mind", emoji: "🧠", goal: "Understand neural plasticity and human behavior.", manifested: false },
+      { id: 2, title: "Cosmos & Physics", emoji: "🌌", goal: "Explore spacetime curvature and relativity.", manifested: false },
+      { id: 3, title: "Financial Freedom", emoji: "💰", goal: "Master cash-flow and compounding capital.", manifested: false }
     ];
   });
   const [newVisionTitle, setNewVisionTitle] = useState('');
   const [newVisionGoal, setNewVisionGoal] = useState('');
-  const [newVisionEmoji, setNewVisionEmoji] = useState('🌱');
+  const [newVisionEmoji, setNewVisionEmoji] = useState('🧠');
 
   // Quotes Vault State
   const themeKeys = Object.keys(QUOTE_DECKS);
@@ -198,11 +179,20 @@ export default function App() {
   const [onlineQuote, setOnlineQuote] = useState<{ quote: string; author: string } | null>(null);
   const [fetchingOnline, setFetchingOnline] = useState(false);
 
+  // Curiosity Questions
+  const [newQuestionText, setNewQuestionText] = useState('');
+  const [questionCategory, setQuestionCategory] = useState('Brain 🧠');
+
   // Calendar State
   const now = new Date();
   const [calYear, setCalYear] = useState(now.getFullYear());
   const [calMonth, setCalMonth] = useState(now.getMonth());
   const [selectedDate, setSelectedDate] = useState<string>(now.toISOString().slice(0, 10));
+
+  // Calendar Direct Log Form
+  const [calLogTopic, setCalLogTopic] = useState('');
+  const [calLogActivity, setCalLogActivity] = useState('');
+  const [calLogMins, setCalLogMins] = useState(30);
 
   // Quests & Journal
   const [newQuestText, setNewQuestText] = useState('');
@@ -211,65 +201,69 @@ export default function App() {
   const [journalTitle, setJournalTitle] = useState('');
   const [journalContent, setJournalContent] = useState('');
   const [selectedMoodSticker, setSelectedMoodSticker] = useState(JOURNAL_MOOD_STICKERS[0]);
+  const [selectedJournalFont, setSelectedJournalFont] = useState(JOURNAL_FONTS[0].id);
 
+  // Save to LocalStorage immediately whenever state changes
+  useEffect(() => { localStorage.setItem('localSessions', JSON.stringify(sessions)); }, [sessions]);
+  useEffect(() => { localStorage.setItem('localTodos', JSON.stringify(todos)); }, [todos]);
+  useEffect(() => { localStorage.setItem('localJournal', JSON.stringify(journalEntries)); }, [journalEntries]);
+  useEffect(() => { localStorage.setItem('localQuestions', JSON.stringify(questions)); }, [questions]);
+  useEffect(() => { localStorage.setItem('userVisions', JSON.stringify(visions)); }, [visions]);
+  useEffect(() => { localStorage.setItem('localDayRatings', JSON.stringify(dayRatings)); }, [dayRatings]);
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+
+  // Recalculate Topic Stats automatically
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+    const totals: Record<string, number> = {};
+    sessions.forEach(s => {
+      totals[s.topic] = (totals[s.topic] || 0) + s.duration_minutes;
+    });
+    setTopicStats(Object.entries(totals).map(([topic, minutes]) => ({ topic, minutes })));
+  }, [sessions]);
 
-  useEffect(() => {
-    localStorage.setItem('alertsEnabled', String(alertsEnabled));
-  }, [alertsEnabled]);
-
-  useEffect(() => {
-    localStorage.setItem('userVisions', JSON.stringify(visions));
-  }, [visions]);
-
-  // Gentle Harmonic Zen Chime
-  const playZenChime = () => {
+  // Cloud Sync on Launch
+  const fetchCloudData = async () => {
     try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const frequencies = [739.99, 932.33, 1108.73];
-      frequencies.forEach((freq, index) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.08);
-        gain.gain.setValueAtTime(0, audioCtx.currentTime + index * 0.08);
-        gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + index * 0.08 + 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + index * 0.08 + 1.6);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + index * 0.08);
-        osc.stop(audioCtx.currentTime + index * 0.08 + 1.6);
-      });
-    } catch (e) {
-      console.log('Audio chime not supported');
-    }
-  };
-
-  const toggleAlerts = async () => {
-    if (!alertsEnabled) {
-      if ("Notification" in window) {
-        const perm = await Notification.requestPermission();
-        if (perm === "granted") {
-          setAlertsEnabled(true);
-          playZenChime();
-          new Notification("Little Life 🐾", { body: "Mochi will chime softly when focus timers finish! 🌸" });
-        }
+      const [sessRes, todosRes, jourRes, questRes] = await Promise.all([
+        fetch(`${API_BASE}/learning-sessions`),
+        fetch(`${API_BASE}/todos`),
+        fetch(`${API_BASE}/journal`),
+        fetch(`${API_BASE}/questions`),
+      ]);
+      if (sessRes.ok) {
+        const cloudSessions = await sessRes.json();
+        if (cloudSessions.length > 0) setSessions(cloudSessions);
       }
+      if (todosRes.ok) {
+        const cloudTodos = await todosRes.json();
+        if (cloudTodos.length > 0) setTodos(cloudTodos);
+      }
+      if (jourRes.ok) {
+        const cloudJour = await jourRes.json();
+        if (cloudJour.length > 0) setJournalEntries(cloudJour);
+      }
+      if (questRes.ok) {
+        const cloudQuest = await questRes.json();
+        if (cloudQuest.length > 0) setQuestions(cloudQuest);
+      }
+    } catch (e) {
+      console.log('Using local offline cache');
+    }
+  };
+
+  useEffect(() => { fetchCloudData(); }, []);
+
+  // Audio Handler
+  const toggleAudio = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      setAlertsEnabled(false);
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     }
   };
 
-  const triggerTestAlert = () => {
-    playZenChime();
-    if (Notification.permission === "granted") {
-      new Notification("Zen Alert 🌸", { body: "Gentle meditation chime is active!" });
-    }
-  };
-
-  // Audio Switcher
   const switchChannel = (idx: number) => {
     setSelectedChannelIdx(idx);
     setIsPlaying(false);
@@ -280,57 +274,7 @@ export default function App() {
     }
   };
 
-  const toggleAudio = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch((e) => {
-        console.error("Audio error", e);
-        setIsPlaying(false);
-      });
-    }
-  };
-
-  const fetchLiveOnlineQuote = async () => {
-    setFetchingOnline(true);
-    try {
-      const res = await fetch("https://dummyjson.com/quotes/random");
-      const data = await res.json();
-      setOnlineQuote({ quote: data.quote, author: data.author });
-    } catch (err) {
-      setOnlineQuote({ quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" });
-    } finally {
-      setFetchingOnline(false);
-    }
-  };
-
-  // Fetch backend data
-  const fetchData = async () => {
-    try {
-      const [sessRes, todosRes, topicsRes, jourRes, questRes] = await Promise.all([
-        fetch(`${API_BASE}/learning-sessions`),
-        fetch(`${API_BASE}/todos`),
-        fetch(`${API_BASE}/analytics/topics`),
-        fetch(`${API_BASE}/journal`),
-        fetch(`${API_BASE}/questions`),
-      ]);
-      setSessions(await sessRes.json());
-      setTodos(await todosRes.json());
-      setTopicStats(await topicsRes.json());
-      setJournalEntries(await jourRes.json());
-      setQuestions(await questRes.json());
-    } catch (e) {
-      console.error('API connection error:', e);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // Timer interval engine
+  // Timer interval
   useEffect(() => {
     let interval: any = null;
     if (timerRunning) {
@@ -342,12 +286,6 @@ export default function App() {
             if (s <= 1) {
               clearInterval(interval);
               setTimerRunning(false);
-              if (alertsEnabled) {
-                playZenChime();
-                if (Notification.permission === "granted") {
-                  new Notification("Ding! Pomodoro Complete! 🌸", { body: `You finished your ${pomodoroTargetMins}-minute session.` });
-                }
-              }
               openReviewModal(pomodoroTargetMins);
               return 0;
             }
@@ -359,7 +297,7 @@ export default function App() {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [timerRunning, timerMode, pomodoroTargetMins, alertsEnabled]);
+  }, [timerRunning, timerMode, pomodoroTargetMins]);
 
   const formatTimer = (totalSecs: number) => {
     const hrs = Math.floor(totalSecs / 3600);
@@ -370,94 +308,203 @@ export default function App() {
   };
 
   const openReviewModal = (elapsedMins: number) => {
-    setReviewTopic(timerTopic || 'Curiosity Exploration');
-    setReviewActivity(timerActivity || 'Deep learning session');
+    setReviewTopic(timerTopic || 'Study Block');
+    setReviewActivity(timerActivity || 'Deep focus session');
     setReviewMinutes(elapsedMins);
     setShowReviewModal(true);
   };
 
-  const handleSaveReviewedSession = async () => {
-    await fetch(`${API_BASE}/learning-sessions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        topic: reviewTopic,
-        activity: reviewActivity,
-        duration_minutes: Number(reviewMinutes),
-        mood: reviewMood,
-        completed: true,
-      }),
+  // Save Session (Local first + cloud sync)
+  const saveSessionRecord = async (sessionData: { topic: string; activity: string; duration_minutes: number; mood: string; session_date: string }) => {
+    const newSession: LearningSession = {
+      id: Date.now(),
+      ...sessionData
+    };
+    setSessions(prev => [newSession, ...prev]);
+
+    // Background sync to cloud
+    try {
+      await fetch(`${API_BASE}/learning-sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...sessionData, completed: true }),
+      });
+    } catch (e) {
+      console.log('Saved to local cache');
+    }
+  };
+
+  const handleSaveReviewedSession = () => {
+    saveSessionRecord({
+      topic: reviewTopic,
+      activity: reviewActivity,
+      duration_minutes: Number(reviewMinutes),
+      mood: reviewMood,
+      session_date: new Date().toISOString().slice(0, 10)
     });
     setShowReviewModal(false);
     setTimerSeconds(timerMode === 'pomodoro' ? pomodoroTargetMins * 60 : 0);
     setTimerTopic('');
     setTimerActivity('');
-    fetchData();
     setActiveTab('study');
   };
 
-  const handleManualQuickLog = async (e: React.FormEvent) => {
+  const handleManualQuickLog = (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualTopic || !manualActivity) return;
-
-    await fetch(`${API_BASE}/learning-sessions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        topic: manualTopic,
-        activity: manualActivity,
-        duration_minutes: Number(manualDuration),
-        mood: 'Focused 😊',
-        completed: true,
-      }),
+    saveSessionRecord({
+      topic: manualTopic,
+      activity: manualActivity,
+      duration_minutes: Number(manualDuration),
+      mood: 'Focused 😊',
+      session_date: new Date().toISOString().slice(0, 10)
     });
     setManualTopic('');
     setManualActivity('');
-    fetchData();
   };
 
-  // Curiosity Questions
+  const handleDeleteSession = async (id: number) => {
+    setSessions(prev => prev.filter(s => s.id !== id));
+    try { await fetch(`${API_BASE}/learning-sessions/${id}`, { method: 'DELETE' }); } catch (e) { }
+  };
+
+  // Calendar Day Activity Logger
+  const handleCalendarLogSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!calLogTopic || !calLogActivity) return;
+    saveSessionRecord({
+      topic: calLogTopic,
+      activity: calLogActivity,
+      duration_minutes: Number(calLogMins),
+      mood: 'Calendar Planted 🌸',
+      session_date: selectedDate
+    });
+    setCalLogTopic('');
+    setCalLogActivity('');
+  };
+
+  const handleSetDayRating = (rating: string) => {
+    setDayRatings(prev => ({ ...prev, [selectedDate]: rating }));
+  };
+
+  // Curiosity Question Handlers
   const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQuestionText) return;
-    await fetch(`${API_BASE}/questions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: newQuestionText, category: questionCategory }),
-    });
+    const newQ: CuriosityQuestion = {
+      id: Date.now(),
+      question: newQuestionText,
+      category: questionCategory,
+      answer_notes: null,
+      status: "Unexplored 💭",
+      created_at: new Date().toISOString()
+    };
+    setQuestions(prev => [newQ, ...prev]);
     setNewQuestionText('');
-    fetchData();
+
+    try {
+      await fetch(`${API_BASE}/questions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: newQ.question, category: newQ.category }),
+      });
+    } catch (e) { }
   };
 
   const handleToggleQuestionStatus = async (q: CuriosityQuestion) => {
     const newStatus = q.status === "Unexplored 💭" ? "Solved 💡" : "Unexplored 💭";
-    await fetch(`${API_BASE}/questions/${q.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus }),
-    });
-    fetchData();
+    setQuestions(prev => prev.map(item => item.id === q.id ? { ...item, status: newStatus } : item));
+    try {
+      await fetch(`${API_BASE}/questions/${q.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (e) { }
   };
 
   const handleDeleteQuestion = async (id: number) => {
-    await fetch(`${API_BASE}/questions/${id}`, { method: 'DELETE' });
-    fetchData();
+    setQuestions(prev => prev.filter(q => q.id !== id));
+    try { await fetch(`${API_BASE}/questions/${id}`, { method: 'DELETE' }); } catch (e) { }
   };
 
-  const handleDeleteSession = async (id: number) => {
-    await fetch(`${API_BASE}/learning-sessions/${id}`, { method: 'DELETE' });
-    fetchData();
+  // Quests
+  const handleAddQuest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newQuestText) return;
+    const newT: TodoItem = { id: Date.now(), text: newQuestText, completed: false };
+    setTodos(prev => [newT, ...prev]);
+    setNewQuestText('');
+    try {
+      await fetch(`${API_BASE}/todos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: newT.text }),
+      });
+    } catch (e) { }
   };
 
-  // Vision Board Handlers
+  const handleToggleQuest = async (id: number) => {
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    try { await fetch(`${API_BASE}/todos/${id}/toggle`, { method: 'PUT' }); } catch (e) { }
+  };
+
+  const handleDeleteQuest = async (id: number) => {
+    setTodos(prev => prev.filter(t => t.id !== id));
+    try { await fetch(`${API_BASE}/todos/${id}`, { method: 'DELETE' }); } catch (e) { }
+  };
+
+  const saveRenameQuest = async (id: number) => {
+    if (!editingQuestText) return;
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, text: editingQuestText } : t));
+    setEditingQuestId(null);
+    try {
+      await fetch(`${API_BASE}/todos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: editingQuestText }),
+      });
+    } catch (e) { }
+  };
+
+  // Journal
+  const handleSaveJournal = async () => {
+    if (!journalContent) return;
+    const newJ: JournalEntry = {
+      id: Date.now(),
+      title: journalTitle || 'Daily Scrapbook Memory',
+      content: journalContent,
+      mood: selectedMoodSticker,
+      fontStyle: selectedJournalFont,
+      created_at: new Date().toISOString()
+    };
+    setJournalEntries(prev => [newJ, ...prev]);
+    setJournalTitle('');
+    setJournalContent('');
+
+    try {
+      await fetch(`${API_BASE}/journal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newJ.title, content: newJ.content, mood: newJ.mood }),
+      });
+    } catch (e) { }
+  };
+
+  const handleDeleteJournal = async (id: number) => {
+    setJournalEntries(prev => prev.filter(j => j.id !== id));
+    try { await fetch(`${API_BASE}/journal/${id}`, { method: 'DELETE' }); } catch (e) { }
+  };
+
+  // Vision Board
   const handleAddVision = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newVisionTitle) return;
     const item: VisionPillar = {
       id: Date.now(),
       title: newVisionTitle,
-      goal: newVisionGoal || "Continuous learning and life alignment.",
-      emoji: newVisionEmoji || "🌱",
+      goal: newVisionGoal || "Self-mastery and learning.",
+      emoji: newVisionEmoji || "🧠",
       manifested: false
     };
     setVisions([item, ...visions]);
@@ -473,71 +520,30 @@ export default function App() {
     setVisions(visions.filter(v => v.id !== id));
   };
 
-  // Quests & Journal
-  const handleAddQuest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newQuestText) return;
-    await fetch(`${API_BASE}/todos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: newQuestText }),
-    });
-    setNewQuestText('');
-    fetchData();
+  const fetchLiveOnlineQuote = async () => {
+    setFetchingOnline(true);
+    try {
+      const res = await fetch("https://dummyjson.com/quotes/random");
+      const data = await res.json();
+      setOnlineQuote({ quote: data.quote, author: data.author });
+    } catch (err) {
+      setOnlineQuote({ quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" });
+    } finally {
+      setFetchingOnline(false);
+    }
   };
 
-  const handleToggleQuest = async (id: number) => {
-    await fetch(`${API_BASE}/todos/${id}/toggle`, { method: 'PUT' });
-    fetchData();
-  };
+  // Calendar
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay();
+  const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
+  const sessionsOnDate = sessions.filter(s => s.session_date === selectedDate);
+  const journalOnDate = journalEntries.filter(j => j.created_at.slice(0, 10) === selectedDate);
 
-  const handleDeleteQuest = async (id: number) => {
-    await fetch(`${API_BASE}/todos/${id}`, { method: 'DELETE' });
-    fetchData();
-  };
-
-  const saveRenameQuest = async (id: number) => {
-    if (!editingQuestText) return;
-    await fetch(`${API_BASE}/todos/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: editingQuestText }),
-    });
-    setEditingQuestId(null);
-    fetchData();
-  };
-
-  const handleSaveJournal = async () => {
-    if (!journalContent) return;
-    await fetch(`${API_BASE}/journal`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: journalTitle || 'Daily Scrapbook Memory',
-        content: journalContent,
-        mood: selectedMoodSticker,
-      }),
-    });
-    setJournalTitle('');
-    setJournalContent('');
-    fetchData();
-  };
-
-  const handleCopyQuote = (text: string, author: string) => {
-    navigator.clipboard.writeText(`"${text}" — ${author}`);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  // Filtered Books List
-  const filteredBooks = bookCategoryFilter === 'All'
-    ? EXPANDED_LIBRARY
-    : EXPANDED_LIBRARY.filter(b => b.category.toLowerCase().includes(bookCategoryFilter.toLowerCase()));
-
-  // Garden Stage
+  // Garden
   function getGardenStage() {
     const count = sessions.length;
-    if (count === 0) return { icon: '🌰', title: 'Little Acorn', next: 1, desc: 'Plant your first study session to watch it germinate!' };
+    if (count === 0) return { icon: '🌰', title: 'Little Acorn', next: 1, desc: 'Plant your first study session to germinate your garden!' };
     if (count < 3) return { icon: '🌱', title: 'Curious Sprout', next: 3, desc: 'The first green leaves appear in the gentle morning light.' };
     if (count < 7) return { icon: '🌿', title: 'Flourishing Fern', next: 7, desc: 'Stems are growing strong with consistent study habits.' };
     if (count < 12) return { icon: '🌷', title: 'Blooming Tulip', next: 12, desc: 'Color fills your garden! Real skills are flourishing.' };
@@ -548,14 +554,6 @@ export default function App() {
 
   const garden = getGardenStage();
   const totalHours = (sessions.reduce((acc, s) => acc + s.duration_minutes, 0) / 60).toFixed(1);
-
-  // Calendar Math
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay();
-  const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
-  const sessionsOnDate = sessions.filter(s => s.session_date === selectedDate);
-  const journalOnDate = journalEntries.filter(j => j.created_at.slice(0, 10) === selectedDate);
-
   const activeDeck = QUOTE_DECKS[selectedQuoteTheme] || [];
   const currentQuoteItem = activeDeck[quoteDeckIdx % activeDeck.length];
 
@@ -608,7 +606,6 @@ export default function App() {
       {/* SIDEBAR */}
       <aside className="scrapbook-sidebar">
         <div>
-          {/* Mochi Cat Mascot */}
           <div className="mascot-card">
             <svg className="cat-svg" viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M22 36L14 12C14 12 28 18 36 26" fill="#ffe082" stroke="#ffb74d" strokeWidth="3" strokeLinejoin="round" />
@@ -625,11 +622,11 @@ export default function App() {
             </svg>
             <h3 style={{ fontSize: '1.25rem', marginTop: '0.4rem' }}>Mochi the Cat</h3>
             <div className="speech-bubble">
-              {timerRunning ? "Shh... Deep focus mode active! 🎧✨" : "Turn a book card or check your study graph! 📊"}
+              {timerRunning ? "Deep focus flow active! 🎧✨" : "A little progress every day makes a lot of life! 🌸"}
             </div>
           </div>
 
-          {/* 3 Pure Calm Audio Channels */}
+          {/* Clean Audio Player (Rain + Lofi) */}
           <div className="lofi-widget">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
               <div>
@@ -641,37 +638,29 @@ export default function App() {
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.35rem', marginTop: '0.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginTop: '0.5rem' }}>
               {AUDIO_CHANNELS.map((ch, i) => (
                 <button
                   key={i}
-                  className={`sound-channel-btn ${selectedChannelIdx === i ? 'active' : ''}`}
+                  className="btn-cute"
+                  style={{ background: selectedChannelIdx === i ? 'var(--accent-pink)' : 'var(--bg-card-hover)', color: selectedChannelIdx === i ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', padding: '0.35rem 0.5rem', fontSize: '0.75rem' }}
                   onClick={() => switchChannel(i)}
                 >
-                  {ch.name.split(" ")[1]}
+                  {ch.name}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Clean Notification Toggle */}
-          <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem' }}>
-            <button onClick={toggleAlerts} style={{ flex: 1, background: alertsEnabled ? 'rgba(255, 117, 151, 0.12)' : 'var(--bg-card)', border: `2px dashed ${alertsEnabled ? 'var(--accent-pink)' : 'var(--border-card)'}`, borderRadius: 14, padding: '0.65rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', color: 'var(--text-main)', textAlign: 'center' }}>
-              {alertsEnabled ? '🔔 Alerts: ON' : '🔕 Alerts: MUTED'}
-            </button>
-            <button onClick={triggerTestAlert} title="Test soothing Zen chime" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 14, padding: '0 0.8rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', color: 'var(--accent-pink)' }}>
-              Chime 🌸
-            </button>
-          </div>
-
+          {/* Vitals Stats */}
           <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1rem', fontSize: '0.85rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span style={{ color: 'var(--text-muted)' }}>Invested Time:</span>
               <strong>{totalHours} hrs</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Curious Questions:</span>
-              <strong>{questions.length}</strong>
+              <span style={{ color: 'var(--text-muted)' }}>Total Sessions:</span>
+              <strong>{sessions.length}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: 'var(--text-muted)' }}>Garden Stage:</span>
@@ -686,11 +675,11 @@ export default function App() {
         </button>
       </aside>
 
-      {/* CENTERED MAIN CANVAS */}
+      {/* CENTERED CANVAS */}
       <main className="scrapbook-canvas">
         <div className="canvas-max-wrapper">
 
-          {/* PERFECTLY CENTERED JELLY NAVIGATION ROW */}
+          {/* JELLY NAVIGATION ROW (CENTERED!) */}
           <div className="jelly-row-wrapper">
             <nav className="jelly-row">
               <button className={`jelly-btn ${activeTab === 'timer' ? 'active' : ''}`} onClick={() => setActiveTab('timer')}>
@@ -701,6 +690,11 @@ export default function App() {
               <button className={`jelly-btn ${activeTab === 'study' ? 'active' : ''}`} onClick={() => setActiveTab('study')}>
                 <div className="jelly-sticker jelly-pink">🎀</div>
                 <span className="jelly-label">Study Log</span>
+              </button>
+
+              <button className={`jelly-btn ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}>
+                <div className="jelly-sticker jelly-lavender">📅</div>
+                <span className="jelly-label">Calendar</span>
               </button>
 
               <button className={`jelly-btn ${activeTab === 'quotes' ? 'active' : ''}`} onClick={() => setActiveTab('quotes')}>
@@ -721,11 +715,6 @@ export default function App() {
               <button className={`jelly-btn ${activeTab === 'vision' ? 'active' : ''}`} onClick={() => setActiveTab('vision')}>
                 <div className="jelly-sticker jelly-butter">🖼️</div>
                 <span className="jelly-label">Vision</span>
-              </button>
-
-              <button className={`jelly-btn ${activeTab === 'calendar' ? 'active' : ''}`} onClick={() => setActiveTab('calendar')}>
-                <div className="jelly-sticker jelly-lavender">📅</div>
-                <span className="jelly-label">Calendar</span>
               </button>
 
               <button className={`jelly-btn ${activeTab === 'garden' ? 'active' : ''}`} onClick={() => setActiveTab('garden')}>
@@ -787,12 +776,12 @@ export default function App() {
             </div>
           )}
 
-          {/* 2. MANUAL STUDY LOG & TOPICS BAR CHART */}
+          {/* 2. STUDY LOG & GRAPH (RECHARTS BAR CHART PERMANENTLY DISPLAYED!) */}
           {activeTab === 'study' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Study Analytics & Graph 🎀</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Your visual topic breakdown and offline study logger.
+                Your visual topic distribution and verified study session history.
               </p>
 
               {/* The Recharts Bar Chart */}
@@ -802,7 +791,7 @@ export default function App() {
                   <h3 style={{ fontSize: '1.3rem' }}>Topic Time Distribution (Minutes)</h3>
                 </div>
                 {topicStats.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No study minutes recorded yet.</div>
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No study minutes recorded yet. Record a session to see your graph grow!</div>
                 ) : (
                   <div style={{ width: '100%', height: 260 }}>
                     <ResponsiveContainer width="100%" height="100%">
@@ -826,7 +815,7 @@ export default function App() {
 
                 <form onSubmit={handleManualQuickLog}>
                   <div className="responsive-form-row" style={{ marginBottom: '1rem' }}>
-                    <input className="input-cute" placeholder="Subject..." value={manualTopic} onChange={e => setManualTopic(e.target.value)} required />
+                    <input className="input-cute" placeholder="Subject (e.g. Python, Economics)..." value={manualTopic} onChange={e => setManualTopic(e.target.value)} required />
                     <input className="input-cute" placeholder="What did you learn?..." value={manualActivity} onChange={e => setManualActivity(e.target.value)} required />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -837,22 +826,112 @@ export default function App() {
                         </button>
                       ))}
                     </div>
-                    <button type="submit" className="btn-cute">Save Record ✨</button>
+                    <button type="submit" className="btn-cute">Plant Milestone 🌱</button>
                   </div>
                 </form>
               </div>
 
               {/* Past Study Milestones Feed with Delete Actions */}
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Past Study Milestones 📜</h3>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Recorded Chapters & Milestones 📜</h3>
               {sessions.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No sessions recorded yet.</div>
+                <div style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No study sessions logged yet!</div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   {sessions.map(s => (
                     <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
                       <div>
                         <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m • {s.session_date}</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                          <span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m • {s.session_date}
+                        </p>
+                      </div>
+                      <button onClick={() => handleDeleteSession(s.id)} title="Delete milestone" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 3. CALENDAR & DAY RATING (Log for specific days + rate your days!) */}
+          {activeTab === 'calendar' && (
+            <div>
+              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Activity Calendar & Mood 📅</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Rate how your day went, log past sessions for any date, and inspect your milestones!
+              </p>
+
+              <div className="calendar-card">
+                <div className="calendar-nav-bar">
+                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else { setCalMonth(m => m - 1); } }}>
+                    <ChevronLeft size={18} /> Prev
+                  </button>
+                  <h3 style={{ fontSize: '1.6rem' }}>{monthName} {calYear}</h3>
+                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else { setCalMonth(m => m + 1); } }}>
+                    Next <ChevronRight size={18} />
+                  </button>
+                </div>
+
+                <div className="calendar-grid">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (<div key={d} className="calendar-header-day">{d}</div>))}
+                  {Array.from({ length: firstDayOfWeek }).map((_, i) => (<div key={`empty-${i}`} className="calendar-cell-empty" />))}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const dayNum = i + 1;
+                    const dateStr = `${calYear}-${(calMonth + 1).toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
+                    const daySessions = sessions.filter(s => s.session_date === dateStr);
+                    const dayRating = dayRatings[dateStr];
+                    const isSelected = selectedDate === dateStr;
+                    return (
+                      <div key={dayNum} className={`calendar-cell ${daySessions.length > 0 ? 'has-activity' : ''} ${isSelected ? 'selected' : ''}`} onClick={() => setSelectedDate(dateStr)}>
+                        <span>{dayNum}</span>
+                        {daySessions.length > 0 && <span style={{ fontSize: '0.7rem' }}>🌸</span>}
+                        {dayRating && <span style={{ fontSize: '0.65rem' }}>{dayRating.split(" ")[0]}</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Day Details & Day Rating Selector */}
+              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>Rate Your Day on {selectedDate}:</h3>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                  {DAY_RATINGS.map(r => (
+                    <button
+                      key={r}
+                      onClick={() => handleSetDayRating(r)}
+                      className="btn-cute"
+                      style={{
+                        background: dayRatings[selectedDate] === r ? 'var(--accent-pink)' : 'var(--bg-card-hover)',
+                        color: dayRatings[selectedDate] === r ? 'white' : 'var(--text-main)',
+                        border: '1px solid var(--border-card)', padding: '0.4rem 0.8rem', fontSize: '0.8rem'
+                      }}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Log for this specific date */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Log Milestone for this Date:</h4>
+                <form onSubmit={handleCalendarLogSubmit} className="responsive-form-row">
+                  <input className="input-cute" placeholder="Subject..." value={calLogTopic} onChange={e => setCalLogTopic(e.target.value)} required />
+                  <input className="input-cute" placeholder="What did you do?..." value={calLogActivity} onChange={e => setCalLogActivity(e.target.value)} required />
+                  <input type="number" className="input-cute" style={{ width: '90px' }} value={calLogMins} onChange={e => setCalLogMins(Number(e.target.value))} />
+                  <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Plant for Date 🌸</button>
+                </form>
+              </div>
+
+              <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>Milestones on {selectedDate}:</h3>
+              {sessionsOnDate.length === 0 && journalOnDate.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No records on this date.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {sessionsOnDate.map(s => (
+                    <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
+                      <div>
+                        <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m</p>
                       </div>
                       <button onClick={() => handleDeleteSession(s.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
                     </div>
@@ -862,7 +941,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 3. QUOTES & WISDOM VAULT (LIVE ONLINE QUOTE API INCLUDED!) */}
+          {/* 4. QUOTES & WISDOM VAULT */}
           {activeTab === 'quotes' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Wisdom & Quotes Sanctuary ✨</h2>
@@ -887,11 +966,11 @@ export default function App() {
                 ))}
               </div>
 
-              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2.5rem', textAlign: 'center', boxShadow: 'var(--shadow-cozy)', marginBottom: '2.5rem' }}>
+              <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 28, padding: '2.5rem', textAlign: 'center', boxShadow: 'var(--shadow-cozy)' }}>
                 <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
                   {onlineQuote ? "Live Web Stream ✨" : selectedQuoteTheme}
                 </span>
-                <p style={{ fontFamily: 'Playfair Display', fontStyle: 'italic', fontSize: '1.5rem', lineHeight: 1.6, color: 'var(--text-main)', margin: '1rem 0' }}>
+                <p className="quote-vault-text" style={{ margin: '1rem 0' }}>
                   "{onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"
                 </p>
                 <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-pink)', textTransform: 'uppercase' }}>
@@ -904,7 +983,7 @@ export default function App() {
                       <ChevronLeft size={18} />
                     </button>
                   )}
-                  <button className="btn-cute" onClick={() => handleCopyQuote(onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote, onlineQuote ? onlineQuote.author : currentQuoteItem?.author)}>
+                  <button className="btn-cute" onClick={() => { navigator.clipboard.writeText(`"${onlineQuote ? onlineQuote.quote : currentQuoteItem?.quote}"`); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }}>
                     {isCopied ? <CheckCheck size={16} /> : <Copy size={16} />} {isCopied ? 'Copied!' : 'Copy Quote'}
                   </button>
                   <button className="btn-cute" style={{ background: 'var(--accent-mint)' }} onClick={fetchLiveOnlineQuote}>
@@ -920,35 +999,16 @@ export default function App() {
             </div>
           )}
 
-          {/* 4. BOOKS WITH FLASHCARD PEEKS */}
+          {/* 5. BOOKS WITH VERIFIED FLASHCARD PEEKS */}
           {activeTab === 'library' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>The Master Bookshelf 📚</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Curated public domain books with iconic flashcard quotes. Click "Peek Inside 🔍" to sample any book!
+                Curated public domain classics. Click "Peek Inside 🔍" to preview the soul of any book!
               </p>
 
-              {/* Genre Filter Chips */}
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '2rem' }}>
-                {['All', 'Psychology', 'Brain', 'Finance', 'Economics', 'Space', 'Indian Classics', 'Manipulation', 'Philosophy', 'AI'].map(genre => (
-                  <button
-                    key={genre}
-                    onClick={() => setBookCategoryFilter(genre)}
-                    style={{
-                      background: bookCategoryFilter === genre ? 'var(--accent-pink)' : 'var(--bg-card)',
-                      color: bookCategoryFilter === genre ? 'white' : 'var(--text-main)',
-                      border: '2px solid var(--border-card)', borderRadius: 999, padding: '0.35rem 0.85rem',
-                      fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer'
-                    }}
-                  >
-                    {genre}
-                  </button>
-                ))}
-              </div>
-
-              {/* Book Cards Grid with Flashcard Peek */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.4rem' }}>
-                {filteredBooks.map((b, idx) => {
+                {EXPANDED_LIBRARY.map((b, idx) => {
                   const isFlipped = peekedBookTitle === b.title;
                   return (
                     <div key={idx} className="book-card-flipper">
@@ -986,12 +1046,12 @@ export default function App() {
             </div>
           )}
 
-          {/* 5. CURIOSITY SANDBOX */}
+          {/* 6. CURIOSITY SANDBOX */}
           {activeTab === 'sandbox' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Curiosity Sandbox 💭</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Never break study flow to Google a rabbit-hole. Dump questions here and research them when you have time!
+                Never break study flow to Google a rabbit-hole. Dump questions here and research them when you're free!
               </p>
 
               <form onSubmit={handleAddQuestion} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
@@ -1029,19 +1089,42 @@ export default function App() {
             </div>
           )}
 
-          {/* 6. VISION BOARD */}
+          {/* 7. VISION BOARD (WITH INTERACTIVE EMOJI PALETTE!) */}
           {activeTab === 'vision' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Scrapbook Vision Board 🖼️</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Create goals, align with your life pillars, and stamp them as Manifested ✨!
+                Pick your emoji, pin your life pillars, and stamp them as Manifested ✨!
               </p>
 
-              <form onSubmit={handleAddVision} className="responsive-form-row" style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.25rem', marginBottom: '2rem' }}>
-                <input className="input-cute" placeholder="Goal (e.g. Master Neuroplasticity)..." value={newVisionTitle} onChange={e => setNewVisionTitle(e.target.value)} required />
-                <input className="input-cute" placeholder="Milestone / Description..." value={newVisionGoal} onChange={e => setNewVisionGoal(e.target.value)} />
-                <input className="input-cute" style={{ width: '80px' }} value={newVisionEmoji} onChange={e => setNewVisionEmoji(e.target.value)} />
-                <button type="submit" className="btn-cute" style={{ whiteSpace: 'nowrap' }}>Pin Vision 📌</button>
+              {/* Add Custom Vision Card Form with Emoji Palette */}
+              <form onSubmit={handleAddVision} style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 20, padding: '1.5rem', marginBottom: '2rem' }}>
+                <div className="responsive-form-row" style={{ marginBottom: '1rem' }}>
+                  <input className="input-cute" placeholder="Goal (e.g. Master Neuroplasticity)..." value={newVisionTitle} onChange={e => setNewVisionTitle(e.target.value)} required />
+                  <input className="input-cute" placeholder="Milestone / Description..." value={newVisionGoal} onChange={e => setNewVisionGoal(e.target.value)} />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>SELECT EMOJI ICON:</label>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    {EMOJI_PALETTE.map(em => (
+                      <button
+                        key={em}
+                        type="button"
+                        onClick={() => setNewVisionEmoji(em)}
+                        style={{
+                          background: newVisionEmoji === em ? 'var(--accent-pink)' : 'var(--bg-card-hover)',
+                          border: '1px solid var(--border-card)', borderRadius: 10, padding: '0.3rem 0.6rem',
+                          fontSize: '1.2rem', cursor: 'pointer'
+                        }}
+                      >
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button type="submit" className="btn-cute">Pin Vision Card 📌</button>
               </form>
 
               <div className="vision-board-grid">
@@ -1066,58 +1149,6 @@ export default function App() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* 7. CALENDAR */}
-          {activeTab === 'calendar' && (
-            <div>
-              <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Activity Calendar 📅</h2>
-              <div className="calendar-card">
-                <div className="calendar-nav-bar">
-                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else { setCalMonth(m => m - 1); } }}>
-                    <ChevronLeft size={18} /> Prev
-                  </button>
-                  <h3 style={{ fontSize: '1.6rem' }}>{monthName} {calYear}</h3>
-                  <button className="btn-cute" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-main)', border: '2px solid var(--border-card)', padding: '0.5rem 1rem' }} onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else { setCalMonth(m => m + 1); } }}>
-                    Next <ChevronRight size={18} />
-                  </button>
-                </div>
-
-                <div className="calendar-grid">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (<div key={d} className="calendar-header-day">{d}</div>))}
-                  {Array.from({ length: firstDayOfWeek }).map((_, i) => (<div key={`empty-${i}`} className="calendar-cell-empty" />))}
-                  {Array.from({ length: daysInMonth }).map((_, i) => {
-                    const dayNum = i + 1;
-                    const dateStr = `${calYear}-${(calMonth + 1).toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
-                    const daySessions = sessions.filter(s => s.session_date === dateStr);
-                    const isSelected = selectedDate === dateStr;
-                    return (
-                      <div key={dayNum} className={`calendar-cell ${daySessions.length > 0 ? 'has-activity' : ''} ${isSelected ? 'selected' : ''}`} onClick={() => setSelectedDate(dateStr)}>
-                        <span>{dayNum}</span>
-                        {daySessions.length > 0 && <span style={{ fontSize: '0.75rem' }}>🌸</span>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>Records for {selectedDate}</h3>
-              {sessionsOnDate.length === 0 && journalOnDate.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 20 }}>No records on this date.</div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  {sessionsOnDate.map(s => (
-                    <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 18, padding: '1.2rem 1.4rem' }}>
-                      <div>
-                        <h4 style={{ fontWeight: 700, fontSize: '1.05rem' }}>{s.activity}</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}><span style={{ color: 'var(--accent-pink)', fontWeight: 700 }}>{s.topic}</span> • {s.duration_minutes}m</p>
-                      </div>
-                      <button onClick={async () => { await fetch(`${API_BASE}/learning-sessions/${s.id}`, { method: 'DELETE' }); fetchData(); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           )}
 
@@ -1169,26 +1200,63 @@ export default function App() {
             </div>
           )}
 
-          {/* 10. JOURNAL */}
+          {/* 10. JOURNAL (WITH FONT SWITCHER!) */}
           {activeTab === 'journal' && (
             <div>
               <h2 style={{ fontSize: '2.4rem', marginBottom: '0.25rem', textAlign: 'center' }}>Daily Scrapbook Journal 📖</h2>
               <div style={{ background: 'var(--bg-card)', border: '2px solid var(--border-card)', borderRadius: 24, padding: '1.75rem', marginBottom: '2rem' }}>
                 <input className="input-cute" placeholder="Title..." value={journalTitle} onChange={e => setJournalTitle(e.target.value)} style={{ marginBottom: '1rem' }} />
+
+                {/* Font Switcher Pills */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)' }}>DIARY FONT:</span>
+                  {JOURNAL_FONTS.map(f => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => setSelectedJournalFont(f.id)}
+                      style={{
+                        background: selectedJournalFont === f.id ? 'var(--accent-pink)' : 'var(--bg-card-hover)',
+                        color: selectedJournalFont === f.id ? 'white' : 'var(--text-main)',
+                        border: '1px solid var(--border-card)', borderRadius: 8, padding: '0.3rem 0.6rem',
+                        fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer'
+                      }}
+                    >
+                      {f.name}
+                    </button>
+                  ))}
+                </div>
+
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                   {JOURNAL_MOOD_STICKERS.map(s => (
                     <button key={s} type="button" onClick={() => setSelectedMoodSticker(s)} style={{ background: selectedMoodSticker === s ? 'var(--accent-lavender)' : 'var(--bg-card-hover)', color: selectedMoodSticker === s ? 'white' : 'var(--text-main)', border: '1px solid var(--border-card)', borderRadius: 10, padding: '0.35rem 0.75rem', cursor: 'pointer' }}>{s}</button>
                   ))}
                 </div>
-                <textarea className="input-cute" rows={4} placeholder="Write freely..." value={journalContent} onChange={e => setJournalContent(e.target.value)} />
+
+                <textarea
+                  className={`input-cute ${selectedJournalFont}`}
+                  rows={4}
+                  placeholder="Write freely in your chosen diary font..."
+                  value={journalContent}
+                  onChange={e => setJournalContent(e.target.value)}
+                />
                 <button className="btn-cute" onClick={handleSaveJournal} style={{ marginTop: '1rem' }}>Save Memory 🌸</button>
               </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 {journalEntries.map(j => (
                   <div key={j.id} className="journal-scrapbook-card">
                     <div className="washi-tape-pin" />
-                    <h4>{j.title}</h4>
-                    <p style={{ marginTop: '0.4rem', whiteSpace: 'pre-wrap' }}>{j.content}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <h4 style={{ fontWeight: 700, fontSize: '1.15rem' }}>{j.title}</h4>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {j.mood && <span className="mood-badge-tag">{j.mood}</span>}
+                        <button onClick={() => handleDeleteJournal(j.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+                    <p className={j.fontStyle || 'journal-font-cute'} style={{ whiteSpace: 'pre-wrap' }}>{j.content}</p>
                   </div>
                 ))}
               </div>
