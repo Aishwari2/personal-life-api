@@ -56,6 +56,7 @@ h3,
   font-weight: 700;
 }
 
+/* Master Layout */
 .little-life-shell {
   display: flex;
   min-height: 100vh;
@@ -63,6 +64,7 @@ h3,
   overflow-x: hidden;
 }
 
+/* Sidebar */
 .scrapbook-sidebar {
   width: 320px;
   background: var(--bg-sidebar);
@@ -74,6 +76,7 @@ h3,
   flex-shrink: 0;
 }
 
+/* Centered Canvas Container */
 .scrapbook-canvas {
   flex: 1;
   padding: 2.5rem 2rem;
@@ -91,7 +94,7 @@ h3,
   flex-direction: column;
 }
 
-/* JELLY ROW: PERFECTLY CENTERED ON LAPTOPS, SMOOTH SCROLL ON MOBILE */
+/* Centered Jelly Navigation Row */
 .jelly-row-wrapper {
   width: 100%;
   display: flex;
@@ -184,14 +187,10 @@ h3,
   color: var(--accent-pink);
 }
 
+/* Mobile Layout */
 @media (max-width: 860px) {
   .little-life-shell {
     flex-direction: column-reverse;
-  }
-
-  /* On mobile / half-screens only: hide sidebar on subpages */
-  .scrapbook-sidebar.hide-on-mobile-subpages {
-    display: none !important;
   }
 
   .scrapbook-sidebar {
@@ -199,6 +198,10 @@ h3,
     border-right: none;
     border-top: 2px dashed var(--border-card);
     padding: 1.5rem 1rem;
+  }
+
+  .scrapbook-sidebar.hide-on-mobile-subpages {
+    display: none !important;
   }
 
   .scrapbook-canvas {
@@ -230,47 +233,61 @@ h3,
   }
 }
 
-/* Books & Flashcard Peek */
-.book-card-flipper {
-  background: var(--bg-card);
-  border: 2px solid var(--border-card);
-  border-radius: 20px;
-  padding: 1.4rem;
-  box-shadow: var(--shadow-cozy);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 240px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+/* Floating Sakura Petals */
+.floating-petal {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.75;
+  animation: floatPetal 7s infinite linear;
+  pointer-events: none;
+  z-index: 10;
 }
 
-.book-card-flipper:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent-pink);
+@keyframes floatPetal {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.9;
+  }
+
+  85% {
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translateY(400px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-.book-peek-quote-box {
-  background: var(--bg-card-hover);
-  border-radius: 14px;
-  padding: 1.1rem;
-  margin: 0.75rem 0;
-  font-family: 'Lora', serif;
-  font-style: italic;
-  line-height: 1.6;
-  font-size: 0.95rem;
-  color: var(--text-main);
-  border-left: 3px solid var(--accent-pink);
+/* Day Rating Stamp Bounce Animation */
+.stamp-bounce {
+  animation: stampPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.quote-vault-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.75rem;
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--text-main);
+@keyframes stampPop {
+  0% {
+    transform: scale(0.9);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
-/* 7 JOURNAL STYLES */
+/* Journal Writing Area Transition */
+.journal-writing-area {
+  transition: font-family 0.3s ease, font-size 0.25s ease, line-height 0.25s ease;
+}
+
+/* 7 Journal Font Styles */
 .journal-font-cute {
   font-family: 'Quicksand', sans-serif !important;
   font-size: 0.95rem !important;
@@ -312,7 +329,47 @@ h3,
   line-height: 1.7 !important;
 }
 
-/* Calendar */
+/* Book Flashcard Flip Cards */
+.book-card-flipper {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow-cozy);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.book-card-flipper:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-pink);
+}
+
+.book-peek-quote-box {
+  background: var(--bg-card-hover);
+  border-radius: 14px;
+  padding: 1.1rem;
+  margin: 0.75rem 0;
+  font-family: 'Lora', serif;
+  font-style: italic;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  border-left: 3px solid var(--accent-pink);
+}
+
+.quote-vault-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.75rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text-main);
+}
+
+/* Calendar Card */
 .calendar-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -371,6 +428,7 @@ h3,
   box-shadow: 0 0 0 3px var(--accent-pink);
 }
 
+/* Journal Scrapbook Card */
 .journal-scrapbook-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -403,6 +461,7 @@ h3,
   font-weight: 700;
 }
 
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -426,6 +485,7 @@ h3,
   text-align: center;
 }
 
+/* Stopwatch Display */
 .stopwatch-hero {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -438,13 +498,14 @@ h3,
 
 .stopwatch-digits {
   font-family: 'Comfortaa', monospace;
-  font-size: 4.5rem;
+  font-size: 4.8rem;
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--accent-pink);
   margin: 1rem 0;
 }
 
+/* Garden Display */
 .garden-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -453,6 +514,8 @@ h3,
   text-align: center;
   box-shadow: var(--shadow-cozy);
   margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .plant-display {
@@ -492,6 +555,7 @@ h3,
   transition: width 0.5s ease;
 }
 
+/* Todo Items */
 .todo-quest-item {
   display: flex;
   justify-content: space-between;
@@ -508,6 +572,7 @@ h3,
   color: var(--text-muted);
 }
 
+/* Mascot Box */
 .mascot-card {
   background: var(--bg-card);
   border: 2px solid var(--border-card);
@@ -622,7 +687,7 @@ h3,
   margin-bottom: 0.85rem;
 }
 
-/* Achievements Cabinet Grid */
+/* Badges Grid */
 .badges-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -672,4 +737,23 @@ h3,
   padding: 0.25rem 0.65rem;
   border-radius: 8px;
   cursor: pointer;
+}
+
+/* Protocols Grid */
+.technique-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.technique-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-cozy);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
